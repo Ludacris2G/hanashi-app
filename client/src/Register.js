@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import nightwind from 'nightwind/helper';
 
 function Register() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     nightwind.toggle();
   };
+
   return (
     <>
-      <div className='bg-primary-50 dark:bg-primary-950 h-screen flex relative'>
+      <div className='bg-primary-50 dark:bg-primary-950 h-screen flex relative items-center'>
+        {/* THEME TOGGLE BUTTON */}
         <button
           type='button'
           className={`rounded-full w-14 h-8 flex items-center justify-${
@@ -32,18 +37,23 @@ function Register() {
             }}
           />
         </button>
-        <form className='w-50 mx-auto'>
+        {/* LOGIN FORM */}
+        <form className='w-50 mx-auto mb-12'>
           <input
-            className='block w-full rounded-sm p-2 mb-2'
+            className='block w-full rounded-sm p-2 mb-2 border'
             type='text'
             placeholder='username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
-            className='block w-full rounded-sm p-2 mb-2'
+            className='block w-full rounded-sm p-2 mb-2 border'
             type='password'
             placeholder='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <button className='bg-primary-700 text-primary-50  w-full rounded-sm'>
+          <button className='bg-primary-700 text-primary-50  w-full rounded-sm p-2'>
             Register
           </button>
         </form>
