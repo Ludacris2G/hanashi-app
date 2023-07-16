@@ -8,6 +8,11 @@ function ThemeButton() {
     nightwind.toggle();
   };
   return (
+    // when restarting the app this component is not
+    // visible on the page for some reason
+    // after I copy the button code to the Register.js
+    // and right aftere I delete it it just pops up
+    // very weird
     <button
       type='button'
       className={`rounded-full w-14 h-8 flex items-center justify-${
