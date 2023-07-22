@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.pre('save', async function () {
-  const salt = await bcrypt.getSalt(10);
+  const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
@@ -33,4 +33,4 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
-modules.export = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
