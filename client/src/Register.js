@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import nightwind from 'nightwind/helper';
+import axios from 'axios';
 
 function Register() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -10,6 +11,19 @@ function Register() {
     setIsDarkMode(!isDarkMode);
     nightwind.toggle();
   };
+
+  async function register(e) {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post('/api/v1/auth/register', {
+        username,
+        password,
+      });
+      console.log(data);
+    } catch (error) {
+      console.log(error.response.data);
+    }
+  }
 
   return (
     <>
@@ -38,7 +52,7 @@ function Register() {
           />
         </button>
         {/* LOGIN FORM */}
-        <form className='w-50 mx-auto mb-12'>
+        <form className='w-50 mx-auto mb-12' onSubmit={register}>
           <input
             className='block w-full rounded-sm p-2 mb-2 border'
             type='text'
