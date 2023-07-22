@@ -24,7 +24,12 @@ app.set('trust proxy', 1);
 // app use
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:3000',
+  })
+);
 app.use(xss());
 
 app.get('/', (req, res) => {
