@@ -7,7 +7,7 @@ const register = async (req, res) => {
   res
     .cookie('token', token)
     .status(StatusCodes.CREATED)
-    .json({ user: { name: user.username }, token });
+    .json({ user: { id: user._id }, token });
 };
 
 module.exports = { register };
