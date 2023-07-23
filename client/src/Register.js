@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import nightwind from 'nightwind/helper';
 import axios from 'axios';
+import { UserContext } from './UserContext';
 
 function Register() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  const { setUsername: setLoggedInUsername, setId } = useContext(UserContext);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -19,9 +23,11 @@ function Register() {
         username,
         password,
       });
-      console.log(data);
+      setLoggedInUsername(username);
+      setId(data.user.id);
     } catch (error) {
-      console.log(error.response.data);
+      setError(error.response.data.msg);
+      setTimeout(() => setError(null), 3000);
     }
   }
 
@@ -52,7 +58,11 @@ function Register() {
           />
         </button>
         {/* LOGIN FORM */}
-        <form className='w-50 mx-auto mb-12' onSubmit={register}>
+        <form
+          style={{ width: '200px' }}
+          className='w-50 mx-auto mb-12'
+          onSubmit={register}
+        >
           <input
             className='block w-full rounded-sm p-2 mb-2 border'
             type='text'
@@ -70,6 +80,9 @@ function Register() {
           <button className='bg-primary-700 text-primary-50  w-full rounded-sm p-2'>
             Register
           </button>
+          {error && (
+            <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
+          )}
         </form>
       </div>
     </>
