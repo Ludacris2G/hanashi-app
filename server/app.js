@@ -1,6 +1,5 @@
 require('dotenv').config();
 require('express-async-errors');
-const errorHandlerMiddleware = require('./middleware/error-handler.js');
 
 // extra security packages
 const helmet = require('helmet');
@@ -18,6 +17,8 @@ const connectDB = require('./db/connect');
 const authRouter = require('./routes/auth');
 
 // error handler
+const notFoundMiddleware = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler.js');
 
 app.set('trust proxy', 1);
 
@@ -39,6 +40,7 @@ app.get('/', (req, res) => {
 // routes
 app.use('/api/v1/auth', authRouter);
 
+app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT | 5001;
