@@ -16,6 +16,9 @@ const connectDB = require('./db/connect');
 // routers
 const authRouter = require('./routes/auth');
 
+// cookies
+const cookieParser = require('cookie-parser');
+
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler.js');
@@ -32,6 +35,7 @@ app.use(
   })
 );
 app.use(xss());
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Works' });
