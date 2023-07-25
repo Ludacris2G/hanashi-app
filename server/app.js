@@ -23,8 +23,6 @@ const cookieParser = require('cookie-parser');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler.js');
 
-app.set('trust proxy', 1);
-
 // app use
 app.use(express.json());
 app.use(helmet());
@@ -47,7 +45,7 @@ app.use('/api/v1/auth', authRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT | 5001;
+const port = process.env.PORT || 5001;
 
 const start = async () => {
   try {
