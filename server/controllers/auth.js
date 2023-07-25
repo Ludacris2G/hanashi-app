@@ -16,12 +16,12 @@ const verifyToken = (req, res) => {
   const { token } = req.cookies;
 
   if (!token) {
-    return new UnauthenticatedError('Unauthorized');
+    throw new UnauthenticatedError('Unauthorized');
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.status(StatusCodes.OK).json({ token });
+    res.status(StatusCodes.OK).json({ decoded });
   } catch (error) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
