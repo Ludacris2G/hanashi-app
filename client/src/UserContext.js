@@ -9,14 +9,15 @@ export function UserContextProvider({ children }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = await axios.get('/api/v1/auth/profile');
+        const data = await axios.get('/api/v1/auth/profile');
+        console.log({ data });
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (username) fetchData();
+  }, [username]);
   return (
     <UserContext.Provider value={{ username, setUsername, id, setId }}>
       {children}
