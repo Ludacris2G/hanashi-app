@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const { StatusCodes } = require('http-status-codes');
+const jwt = require('jsonwebtoken');
+const UnauthenticatedError = require('../errors/unauthenticated');
 
 const register = async (req, res) => {
   const user = await User.create({ ...req.body });
@@ -7,7 +9,24 @@ const register = async (req, res) => {
   res
     .cookie('token', token)
     .status(StatusCodes.CREATED)
-    .json({ user: { id: user._id }, token });
+    .json({ user: { id: user._id, username: user.username } });
 };
 
-module.exports = { register };
+const verifyToken = (req, res) => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    return new UnauthenticatedError('Unauthorized');
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(StatusCodes.OK).json({ token });
+  } catch (error) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ error: 'Invalid or expired token' });
+  }
+};
+
+module.exports = { register, verifyToken };
