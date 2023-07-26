@@ -2,12 +2,14 @@ import React, { useContext, useState } from 'react';
 import nightwind from 'nightwind/helper';
 import axios from 'axios';
 import { UserContext } from './UserContext';
+import { useNavigate } from 'react-router-dom';
 
-function Register() {
+function Register({ setUser }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const { setUsername: setLoggedInUsername, setId } = useContext(UserContext);
 
@@ -25,6 +27,8 @@ function Register() {
       });
       setLoggedInUsername(username);
       setId(data.user.id);
+      setUser(username);
+      navigate('/chats');
     } catch (error) {
       setError(error.response.data.msg);
       setTimeout(() => setError(null), 3000);
