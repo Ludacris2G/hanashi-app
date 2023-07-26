@@ -4,9 +4,8 @@ import { UserContext } from './UserContext';
 
 export default function Routes() {
   const { username, id } = useContext(UserContext);
-  console.log(username, id);
 
-  if (username && id) return <p>Logged in !</p>;
+  if (username && id) return <p>Hello {username} ! </p>;
 
   return <Register />;
 }
