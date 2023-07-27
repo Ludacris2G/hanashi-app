@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import nightwind from 'nightwind/helper';
 import axios from 'axios';
 import { UserContext } from './UserContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Register({ setUser }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -37,7 +37,7 @@ function Register({ setUser }) {
 
   return (
     <>
-      <div className='bg-primary-50 dark:bg-primary-950 h-screen flex relative items-center'>
+      <div className='bg-primary-200 dark:bg-primary-950 h-screen flex relative items-center'>
         {/* THEME TOGGLE BUTTON */}
         <button
           type='button'
@@ -84,6 +84,13 @@ function Register({ setUser }) {
           <button className='bg-primary-700 text-primary-50  w-full rounded-sm p-2'>
             Register
           </button>
+          <p className='mt-1 text-center text-xs text-primary-900 font-thin'>
+            Already have an account?
+            <br />
+            <Link to='login' className='text-primary-500 font-normal'>
+              Log in here!
+            </Link>
+          </p>
           {error && (
             <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
           )}
