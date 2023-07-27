@@ -6,6 +6,9 @@ import { BrowserRouter, Redirect, Route, Routes } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import NotFound from './NotFound';
 import Chats from './Chats';
+import ProtectedRoute from './ProtectedRoute';
+import Login from './Login';
+import PublicLayout from './components/PublicLayout';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,11 +21,21 @@ function App() {
       <UserContextProvider>
         <BrowserRouter>
           <Routes>
-            {/* Public route: Register */}
-            <Route path='/' element={<Register setUser={setUser} />} />
+            {/* Public routes: */}
+            <Route element={<PublicLayout />}>
+              <Route path='/' element={<Register setUser={setUser} />} />
+              <Route path='/login' element={<Login />} />
+            </Route>
 
-            {/* Private route: Chat */}
-            <Route path='/chats' element={<Chats user={user} />}></Route>
+            {/* Private route: Chats */}
+            <Route
+              path='/chats'
+              element={
+                <ProtectedRoute user={user} redirectPath='/'>
+                  <Chats />
+                </ProtectedRoute>
+              }
+            ></Route>
 
             {/* Not Found Route */}
             <Route path='*' element={<NotFound />} />
