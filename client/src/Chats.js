@@ -1,15 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { UserContext } from './UserContext';
-import { Navigate, useNavigate } from 'react-router-dom';
 
-function Chats({ user }) {
-  if (!user) {
-    return <Navigate to='/' replace />;
-  }
-
+function Chats() {
+  const { username, id } = useContext(UserContext);
   return (
     <div>
-      <p>Hello {user} !</p>
+      <p>Hello {username} !</p>
     </div>
   );
 }
