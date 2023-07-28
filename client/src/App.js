@@ -24,18 +24,20 @@ function App() {
             {/* Public routes: */}
             <Route element={<PublicLayout />}>
               <Route path='/' element={<Register setUser={setUser} />} />
-              <Route path='/login' element={<Login />} />
+              <Route path='/login' element={<Login setUser={setUser} />} />
             </Route>
 
             {/* Private route: Chats */}
-            <Route
-              path='/chats'
-              element={
-                <ProtectedRoute user={user} redirectPath='/'>
-                  <Chats />
-                </ProtectedRoute>
-              }
-            ></Route>
+            <Route element={<PublicLayout />}>
+              <Route
+                path='/chats'
+                element={
+                  <ProtectedRoute user={user} redirectPath='/'>
+                    <Chats />
+                  </ProtectedRoute>
+                }
+              ></Route>
+            </Route>
 
             {/* Not Found Route */}
             <Route path='*' element={<NotFound />} />
