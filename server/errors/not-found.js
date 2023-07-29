@@ -7,3 +7,5 @@ class NotFoundError extends CustomAPIError {
     this.statusCode = StatusCodes.NOT_FOUND;
   }
 }
+
+module.exports = NotFoundError;
