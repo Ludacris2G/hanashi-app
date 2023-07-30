@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import axios from 'axios';
@@ -9,17 +9,20 @@ function Login({ setUser }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { setUsername: setLoggedInUsername, setId } = useContext(UserContext);
+  const { setUsername: setLoggedInUsername, username: mainUsername } =
+    useContext(UserContext);
 
   async function logIn(e) {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/v1/auth/register', {
+      const { data } = await axios.post('/api/v1/auth/login', {
         username,
         password,
       });
+
+      localStorage.setItem('token', data.token);
+
       setLoggedInUsername(username);
-      setId(data.user.id);
       setUser(username);
       navigate('/chats');
     } catch (error) {
@@ -27,6 +30,12 @@ function Login({ setUser }) {
       setTimeout(() => setError(null), 3000);
     }
   }
+
+  useEffect(() => {
+    if (mainUsername) {
+      navigate('/chats');
+    }
+  }, []);
 
   return (
     <>
