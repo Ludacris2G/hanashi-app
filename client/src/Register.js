@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import nightwind from 'nightwind/helper';
 import axios from 'axios';
 import { UserContext } from './UserContext';
@@ -8,9 +8,10 @@ function Register({ setUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const { username: mainUsername } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const { setUsername: setLoggedInUsername, setId } = useContext(UserContext);
+  const { setUsername: setLoggedInUsername } = useContext(UserContext);
 
   async function register(e) {
     e.preventDefault();
@@ -19,8 +20,10 @@ function Register({ setUser }) {
         username,
         password,
       });
+
+      localStorage.setItem('token', data.token);
+
       setLoggedInUsername(username);
-      setId(data.user.id);
       setUser(username);
       navigate('/chats');
     } catch (error) {
@@ -28,6 +31,12 @@ function Register({ setUser }) {
       setTimeout(() => setError(null), 3000);
     }
   }
+
+  useEffect(() => {
+    if (mainUsername) {
+      navigate('/chats');
+    }
+  }, [mainUsername]);
 
   return (
     <>
