@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { UserContext, UserContextProvider } from './UserContext';
 import Register from './Register';
-import { BrowserRouter, Redirect, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { useContext, useEffect, useState } from 'react';
+import {  useState } from 'react';
 import NotFound from './NotFound';
 import Chats from './Chats';
 import ProtectedRoute from './ProtectedRoute';
@@ -18,32 +17,30 @@ function App() {
 
   return (
     <>
-      <UserContextProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes: */}
-            <Route element={<PublicLayout />}>
-              <Route path='/' element={<Register setUser={setUser} />} />
-              <Route path='/login' element={<Login setUser={setUser} />} />
-            </Route>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes: */}
+          <Route element={<PublicLayout />}>
+            <Route path='/' element={<Register setUser={setUser} />} />
+            <Route path='/login' element={<Login setUser={setUser} />} />
+          </Route>
 
-            {/* Private route: Chats */}
-            <Route element={<PublicLayout />}>
-              <Route
-                path='/chats'
-                element={
-                  <ProtectedRoute user={user} redirectPath='/'>
-                    <Chats />
-                  </ProtectedRoute>
-                }
-              ></Route>
-            </Route>
+          {/* Private route: Chats */}
+          <Route element={<PublicLayout />}>
+            <Route
+              path='/chats'
+              element={
+                <ProtectedRoute user={user} redirectPath='/'>
+                  <Chats />
+                </ProtectedRoute>
+              }
+            ></Route>
+          </Route>
 
-            {/* Not Found Route */}
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </UserContextProvider>
+          {/* Not Found Route */}
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
