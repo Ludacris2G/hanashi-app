@@ -35,7 +35,7 @@ function Login({ setUser }) {
     if (mainUsername) {
       navigate('/chats');
     }
-  }, []);
+  }, [mainUsername]);
 
   return (
     <>
