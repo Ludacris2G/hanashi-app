@@ -1,4 +1,6 @@
 const ws = require('ws');
+const jwt = require('jsonwebtoken');
+const { UnauthenticatedError } = require('../errors');
 
 const handleWebSocketConnection = (server) => {
   const wss = new ws.WebSocketServer({ server });
@@ -12,9 +14,24 @@ const handleWebSocketConnection = (server) => {
       const token = tokenCookieString?.split('=')[1];
 
       if (token) {
-        console.log(token);
+        jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
+          if (err) throw new UnauthenticatedError('Unauthorized');
+          const { userId, name } = userData;
+          connection.userId = userId;
+          connection.username = name;
+        });
       }
     }
+    [...wss.clients].forEach((client) => {
+      client.send(
+        JSON.stringify({
+          online: [...wss.clients].map((c) => ({
+            userId: c.userId,
+            username: c.username,
+          })),
+        })
+      );
+    });
   });
 };
 
