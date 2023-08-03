@@ -3,6 +3,7 @@ import { UserContext } from './UserContext';
 
 function Chats() {
   const [ws, setWs] = useState(null);
+  const [onlinePeople, setOnlinePeople] = useState({});
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:5001');
@@ -11,12 +12,29 @@ function Chats() {
   }, []);
 
   function handleMessage(e) {
-    console.log('new message ', e);
+    const onlineUsers = JSON.parse(e.data);
+    if ('online' in onlineUsers) {
+      showOnlinePeople(onlineUsers.online);
+    }
+  }
+
+  function showOnlinePeople(peopleArr) {
+    const people = {};
+    peopleArr.forEach(({ userId, username }) => {
+      people[userId] = username;
+    });
+    setOnlinePeople(people);
   }
 
   return (
     <div className='flex h-screen w-screen'>
-      <div className='bg-primary-950 w-1/3 text-primary-100'>contacts</div>
+      <div className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900'>
+        {Object.keys(onlinePeople).map((userId, i) => (
+          <div className=' border-b py-2 border-primary-900' key={i}>
+            {onlinePeople[userId]}
+          </div>
+        ))}
+      </div>
       <div className='flex flex-col bg-primary-800 w-2/3 p-2'>
         <div className='flex-grow text-primary-100'>
           messages with selected person
