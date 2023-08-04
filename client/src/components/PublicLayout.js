@@ -26,7 +26,7 @@ function PublicLayout() {
           }}
         >
           <span
-            className={`rounded-full w-6 h-6 bg-white dark:bg-gray-200 shadow-md transform `}
+            className={`rounded-full w-6 h-6 bg-primary-800 dark:bg-gray-200 shadow-md transform `}
             style={{
               transform: `translate3d(${
                 isDarkMode ? 'calc(100% + 4px)' : '4px'
