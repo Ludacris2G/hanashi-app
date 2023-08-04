@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
+import Avatar from './components/Avatar';
 
 function Chats() {
   const [ws, setWs] = useState(null);
@@ -28,21 +29,31 @@ function Chats() {
 
   return (
     <div className='flex h-screen w-screen'>
-      <div className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900'>
+      <div
+        className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900'
+        style={{ maxWidth: '300px' }}
+      >
+        <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
+          HanashiApp 話
+        </div>
         {Object.keys(onlinePeople).map((userId, i) => (
-          <div className=' border-b py-2 border-primary-900' key={i}>
-            {onlinePeople[userId]}
+          <div
+            className=' border rounded-full border-primary-900 m-1 flex items-center gap-2 cursor-pointer'
+            key={i}
+          >
+            <Avatar username={onlinePeople[userId]} userId={userId} />
+            <span>{onlinePeople[userId]}</span>
           </div>
         ))}
       </div>
-      <div className='flex flex-col bg-primary-800 w-2/3 p-2'>
+      <div className='flex flex-col bg-primary-800 w-full p-2'>
         <div className='flex-grow text-primary-100'>
           messages with selected person
         </div>
         <div className='flex gap-2'>
           <input
             type='text'
-            className='bg-primary-100 border p-2 flex-grow rounded-sm'
+            className='bg-primary-100 border p-2 flex-grow rounded-sm w-0'
             placeholder='Type here broseph'
           />
           <button className='bg-primary-900 p-2 text-primary-100 rounded-sm'>
