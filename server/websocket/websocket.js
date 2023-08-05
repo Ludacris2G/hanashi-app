@@ -6,6 +6,7 @@ const handleWebSocketConnection = (server) => {
   const wss = new ws.WebSocketServer({ server });
 
   wss.on('connection', (connection, req) => {
+    // read username and id from the cookie
     const { cookie } = req.headers;
     if (cookie) {
       const tokenCookieString = cookie
@@ -22,6 +23,7 @@ const handleWebSocketConnection = (server) => {
         });
       }
     }
+    // send online people to all users
     [...wss.clients].forEach((client) => {
       client.send(
         JSON.stringify({
@@ -31,6 +33,17 @@ const handleWebSocketConnection = (server) => {
           })),
         })
       );
+    });
+    connection.on('message', (message) => {
+      const messageData = JSON.parse(message.toString());
+      const { recipient, text } = messageData;
+      if (recipient && text) {
+        [...wss.clients]
+          .filter((client) => client.userId === recipient)
+          .forEach((client) => {
+            client.send(JSON.stringify(text));
+          });
+      }
     });
   });
 };
