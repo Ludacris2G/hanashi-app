@@ -5,6 +5,7 @@ import Avatar from './components/Avatar';
 function Chats() {
   const [ws, setWs] = useState(null);
   const [onlinePeople, setOnlinePeople] = useState({});
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:5001');
@@ -27,9 +28,14 @@ function Chats() {
     setOnlinePeople(people);
   }
 
+  function removePeopleHighlight(e) {
+    if (e.currentTarget === e.target) setSelectedUserId(null);
+  }
+
   return (
     <div className='flex h-screen w-screen'>
       <div
+        onClick={(e) => removePeopleHighlight(e)}
         className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900'
         style={{ maxWidth: '300px' }}
       >
@@ -38,7 +44,11 @@ function Chats() {
         </div>
         {Object.keys(onlinePeople).map((userId, i) => (
           <div
-            className=' border rounded-full border-primary-900 m-1 flex items-center gap-2 cursor-pointer'
+            onClick={() => setSelectedUserId(userId)}
+            className={
+              ' border rounded-full border-primary-900 m-1 flex items-center gap-2 cursor-pointer ' +
+              (userId === selectedUserId ? 'bg-primary-500' : '')
+            }
             key={i}
           >
             <Avatar username={onlinePeople[userId]} userId={userId} />
