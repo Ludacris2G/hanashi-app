@@ -34,6 +34,7 @@ const handleWebSocketConnection = (server) => {
         })
       );
     });
+
     connection.on('message', (message) => {
       const messageData = JSON.parse(message.toString());
       const { recipient, text } = messageData;
@@ -41,7 +42,7 @@ const handleWebSocketConnection = (server) => {
         [...wss.clients]
           .filter((client) => client.userId === recipient)
           .forEach((client) => {
-            client.send(JSON.stringify(text));
+            client.send(JSON.stringify({ text, sender: connection.userId }));
           });
       }
     });

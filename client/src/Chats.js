@@ -24,7 +24,6 @@ function Chats() {
 
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
-
     if (messageData.online) {
       showOnlinePeople(messageData.online);
     } else {

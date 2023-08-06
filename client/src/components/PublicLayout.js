@@ -18,7 +18,7 @@ function PublicLayout() {
           type='button'
           className={`rounded-full w-14 h-8 flex items-center justify-${
             isDarkMode ? 'end' : 'start'
-          } bg-gray-300 dark:bg-gray-700 absolute z-10`}
+          } bg-gray-300 dark:bg-gray-700 absolute`}
           onClick={toggleDarkMode}
           style={{
             right: '1rem',
