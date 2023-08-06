@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import Avatar from './components/Avatar';
+import { useNavigate } from 'react-router-dom';
 
 function Chats() {
   const [ws, setWs] = useState(null);
@@ -8,25 +9,40 @@ function Chats() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessageText, setNewMessageText] = useState('');
   const [messages, setMessages] = useState([]);
-  const { username: user, id } = useContext(UserContext);
+  const { username: user, id, setUsername, setId } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:5001');
     setWs(ws);
     ws.addEventListener('message', handleMessage);
-  }, []);
+
+    const intervalId = setInterval(checkTocken, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [id]);
 
   function handleMessage(e) {
-    const onlineUsers = JSON.parse(e.data);
-    if (onlineUsers.online) {
-      showOnlinePeople(onlineUsers.online);
+    const messageData = JSON.parse(e.data);
+
+    if (messageData.online) {
+      showOnlinePeople(messageData.online);
     } else {
-      const message = e.data;
+      const message = {
+        text: messageData.text,
+        timestamp: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [
+        ...prev,
+        { isOurs: false, text: message.text, timestamp: message.timestamp },
+      ]);
     }
   }
 
   function showOnlinePeople(peopleArr) {
     const people = {};
+
     peopleArr.forEach(({ userId, username }) => {
       if (userId !== id) people[userId] = username;
     });
@@ -49,6 +65,15 @@ function Chats() {
 
     setNewMessageText('');
     setMessages((prev) => [...prev, { text: newMessageText, isOurs: true }]);
+  }
+
+  function checkTocken() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUsername(null);
+      setId(null);
+      navigate('/login');
+    }
   }
 
   return (
