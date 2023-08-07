@@ -1,6 +1,7 @@
 const ws = require('ws');
 const jwt = require('jsonwebtoken');
 const { UnauthenticatedError } = require('../errors');
+const Message = require('../models/Message');
 
 const handleWebSocketConnection = (server) => {
   const wss = new ws.WebSocketServer({ server });
@@ -35,14 +36,26 @@ const handleWebSocketConnection = (server) => {
       );
     });
 
-    connection.on('message', (message) => {
+    connection.on('message', async (message) => {
       const messageData = JSON.parse(message.toString());
       const { recipient, text } = messageData;
       if (recipient && text) {
+        const messageDoc = await Message.create({
+          sender: connection.userId,
+          recipient: recipient,
+          text: text,
+        });
+        
         [...wss.clients]
           .filter((client) => client.userId === recipient)
           .forEach((client) => {
-            client.send(JSON.stringify({ text, sender: connection.userId }));
+            client.send(
+              JSON.stringify({
+                text,
+                sender: connection.userId,
+                id: messageDoc._id,
+              })
+            );
           });
       }
     });
