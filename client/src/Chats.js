@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import Avatar from './components/Avatar';
 import { useNavigate } from 'react-router-dom';
+import { uniqBy } from 'lodash';
 
 function Chats() {
   const [ws, setWs] = useState(null);
@@ -30,11 +31,17 @@ function Chats() {
       const message = {
         text: messageData.text,
         timestamp: new Date().toISOString(),
+        id: messageData.id,
       };
 
       setMessages((prev) => [
         ...prev,
-        { isOurs: false, text: message.text, timestamp: message.timestamp },
+        {
+          isOurs: false,
+          text: message.text,
+          timestamp: message.timestamp,
+          id: message.id,
+        },
       ]);
     }
   }
@@ -75,6 +82,8 @@ function Chats() {
     }
   }
 
+  const messagesWithoutDuplicates = uniqBy(messages, 'id');
+
   return (
     <div className='flex h-screen w-screen'>
       <div
@@ -109,7 +118,7 @@ function Chats() {
           )}
           {selectedUserId && (
             <div>
-              {messages.map((message, i) => (
+              {messagesWithoutDuplicates.map((message, i) => (
                 <div key={i}>{message.text}</div>
               ))}
             </div>
