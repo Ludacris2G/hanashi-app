@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from './UserContext';
 import Avatar from './components/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { uniqBy } from 'lodash';
+import ThemeButton from './components/ThemeButton';
 
 function Chats() {
   const [ws, setWs] = useState(null);
@@ -12,6 +13,7 @@ function Chats() {
   const [messages, setMessages] = useState([]);
   const { username: user, id, setUsername, setId } = useContext(UserContext);
   const navigate = useNavigate();
+  const scrollReferenceDiv = useRef();
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:5001');
@@ -23,26 +25,19 @@ function Chats() {
     return () => clearInterval(intervalId);
   }, [id]);
 
+  useEffect(() => {
+    const div = scrollReferenceDiv.current;
+    if (div) {
+      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [messages]);
+
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
     if (messageData.online) {
       showOnlinePeople(messageData.online);
     } else {
-      const message = {
-        text: messageData.text,
-        timestamp: new Date().toISOString(),
-        id: messageData.id,
-      };
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          isOurs: false,
-          text: message.text,
-          timestamp: message.timestamp,
-          id: message.id,
-        },
-      ]);
+      setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
     }
   }
 
@@ -69,8 +64,11 @@ function Chats() {
       })
     );
 
+    setMessages((prev) => [
+      ...prev,
+      { text: newMessageText, isOurs: true, id: new Date().toISOString() },
+    ]);
     setNewMessageText('');
-    setMessages((prev) => [...prev, { text: newMessageText, isOurs: true }]);
   }
 
   function checkTocken() {
@@ -83,7 +81,7 @@ function Chats() {
   }
 
   const messagesWithoutDuplicates = uniqBy(messages, 'id');
-
+  console.log(messagesWithoutDuplicates);
   return (
     <div className='flex h-screen w-screen'>
       <div
@@ -117,10 +115,23 @@ function Chats() {
             </div>
           )}
           {selectedUserId && (
-            <div>
-              {messagesWithoutDuplicates.map((message, i) => (
-                <div key={i}>{message.text}</div>
-              ))}
+            <div className='relative h-full'>
+              <div className='overflow-y-scroll absolute inset-0 py-1'>
+                {messagesWithoutDuplicates.map((message, i) => (
+                  <div
+                    className={
+                      '' +
+                      (message.isOurs
+                        ? 'bg-blue-900 text-white p-2 rounded-full m-1 w-fit ml-auto'
+                        : 'bg-white text-gray-800 rounded-full m-1 p-2 w-fit')
+                    }
+                    key={i}
+                  >
+                    {message.text}
+                  </div>
+                ))}
+                <div ref={scrollReferenceDiv}></div>
+              </div>
             </div>
           )}
         </div>
@@ -130,12 +141,12 @@ function Chats() {
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               type='text'
-              className='bg-primary-100 border p-2 flex-grow rounded-sm w-0'
+              className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
               placeholder='Type here broseph'
             />
             <button
               type='submit'
-              className='bg-primary-900 p-2 text-primary-100 rounded-sm'
+              className='bg-primary-900 p-3 text-primary-100 rounded-full'
             >
               <svg
                 viewBox='0 0 24 24'
