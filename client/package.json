@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
+    "lodash": "^4.17.21",
     "nightwind": "^1.1.13",
     "postcss": "^8.4.26",
     "react": "^18.2.0",

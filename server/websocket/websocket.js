@@ -42,10 +42,10 @@ const handleWebSocketConnection = (server) => {
       if (recipient && text) {
         const messageDoc = await Message.create({
           sender: connection.userId,
-          recipient: recipient,
           text: text,
+          recipient,
         });
-        
+
         [...wss.clients]
           .filter((client) => client.userId === recipient)
           .forEach((client) => {
@@ -54,6 +54,8 @@ const handleWebSocketConnection = (server) => {
                 text,
                 sender: connection.userId,
                 id: messageDoc._id,
+                timestamp: messageDoc.createdAt,
+                recipient,
               })
             );
           });
