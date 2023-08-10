@@ -3,7 +3,6 @@ import { UserContext } from './UserContext';
 import Avatar from './components/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { uniqBy } from 'lodash';
-import ThemeButton from './components/ThemeButton';
 import axios from 'axios';
 
 function Chats() {
@@ -28,13 +27,27 @@ function Chats() {
   }, [messages]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
-      setMessages(messages.data.messages);
-      console.log(messages.data);
-    };
     if (selectedUserId) fetchMessages();
   }, [selectedUserId]);
+
+  async function fetchMessages() {
+    const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
+    const mappedMessages = messages.data.messages.map((message) => {
+      if (message.sender === id) {
+        return {
+          ...message,
+          isOurs: true,
+        };
+      } else {
+        return {
+          ...message,
+          isOurs: false,
+        };
+      }
+    });
+    console.log(mappedMessages);
+    setMessages(mappedMessages);
+  }
 
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
@@ -70,7 +83,7 @@ function Chats() {
 
     setMessages((prev) => [
       ...prev,
-      { text: newMessageText, isOurs: true, id: new Date().toISOString() },
+      { text: newMessageText, isOurs: true, _id: new Date().toISOString() },
     ]);
     setNewMessageText('');
   }
@@ -99,7 +112,7 @@ function Chats() {
     return () => clearInterval(intervalId);
   }
 
-  const messagesWithoutDuplicates = uniqBy(messages, 'id');
+  const messagesWithoutDuplicates = uniqBy(messages, '_id');
   console.log(messagesWithoutDuplicates);
   return (
     <div className='flex h-screen w-screen'>
