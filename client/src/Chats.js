@@ -4,6 +4,7 @@ import Avatar from './components/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { uniqBy } from 'lodash';
 import ThemeButton from './components/ThemeButton';
+import axios from 'axios';
 
 function Chats() {
   const [ws, setWs] = useState(null);
@@ -16,13 +17,7 @@ function Chats() {
   const scrollReferenceDiv = useRef();
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:5001');
-    setWs(ws);
-    ws.addEventListener('message', handleMessage);
-
-    const intervalId = setInterval(checkTocken, 60000);
-
-    return () => clearInterval(intervalId);
+    connectToWs();
   }, [id]);
 
   useEffect(() => {
@@ -31,6 +26,15 @@ function Chats() {
       div.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }, [messages]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
+      setMessages(messages.data.messages);
+      console.log(messages.data);
+    };
+    if (selectedUserId) fetchMessages();
+  }, [selectedUserId]);
 
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
@@ -45,7 +49,7 @@ function Chats() {
     const people = {};
 
     peopleArr.forEach(({ userId, username }) => {
-      if (userId !== id) people[userId] = username;
+      if (userId !== id && id) people[userId] = username;
     });
     setOnlinePeople(people);
   }
@@ -78,6 +82,21 @@ function Chats() {
       setId(null);
       navigate('/login');
     }
+  }
+
+  function connectToWs() {
+    const ws = new WebSocket('ws://localhost:5001');
+    setWs(ws);
+    ws.addEventListener('message', handleMessage);
+    ws.addEventListener('close', () => {
+      setTimeout(() => {
+        connectToWs();
+      }, 1000);
+    });
+
+    const intervalId = setInterval(checkTocken, 60000);
+
+    return () => clearInterval(intervalId);
   }
 
   const messagesWithoutDuplicates = uniqBy(messages, 'id');
