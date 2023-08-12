@@ -1,19 +1,21 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from './UserContext';
-import Avatar from './components/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { uniqBy } from 'lodash';
 import axios from 'axios';
+import People from './components/People';
 
 function Chats() {
   const [ws, setWs] = useState(null);
   const [onlinePeople, setOnlinePeople] = useState({});
+  const [offlinePeople, setOfflinePeople] = useState({});
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessageText, setNewMessageText] = useState('');
   const [messages, setMessages] = useState([]);
   const { username: user, id, setUsername, setId } = useContext(UserContext);
   const navigate = useNavigate();
   const scrollReferenceDiv = useRef();
+  const messagesWithoutDuplicates = uniqBy(messages, '_id');
 
   useEffect(() => {
     connectToWs();
@@ -30,6 +32,23 @@ function Chats() {
     if (selectedUserId) fetchMessages();
   }, [selectedUserId]);
 
+  useEffect(() => {
+    getOfflinePeople();
+  }, [onlinePeople]);
+
+  async function getOfflinePeople() {
+    const request = await axios.get('/api/v1/people');
+    const offlinePeople = request.data.people.filter(
+      (person) =>
+        person._id !== id && !Object.keys(onlinePeople).includes(person._id)
+    );
+    const offlinePeopleObj = {};
+    offlinePeople.forEach((person) => {
+      offlinePeopleObj[person._id] = person.username;
+    });
+    setOfflinePeople(offlinePeopleObj);
+  }
+
   async function fetchMessages() {
     const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
     const mappedMessages = messages.data.messages.map((message) => {
@@ -45,7 +64,6 @@ function Chats() {
         };
       }
     });
-    console.log(mappedMessages);
     setMessages(mappedMessages);
   }
 
@@ -112,8 +130,6 @@ function Chats() {
     return () => clearInterval(intervalId);
   }
 
-  const messagesWithoutDuplicates = uniqBy(messages, '_id');
-  console.log(messagesWithoutDuplicates);
   return (
     <div className='flex h-screen w-screen'>
       <div
@@ -126,17 +142,25 @@ function Chats() {
         </div>
         {user}
         {Object.keys(onlinePeople).map((userId) => (
-          <div
-            onClick={() => setSelectedUserId(userId)}
-            className={
-              ' border rounded-full border-primary-900 m-1 flex items-center gap-2 cursor-pointer ' +
-              (userId === selectedUserId ? 'bg-primary-600' : '')
-            }
+          <People
             key={userId}
-          >
-            <Avatar username={onlinePeople[userId]} userId={userId} />
-            <span>{onlinePeople[userId]}</span>
-          </div>
+            selectedUserId={selectedUserId}
+            setSelectedUserId={setSelectedUserId}
+            onlinePeople={onlinePeople}
+            userId={userId}
+            online={true}
+          />
+        ))}
+        <h1>Offline People</h1>
+        {Object.keys(offlinePeople).map((userId) => (
+          <People
+            key={userId}
+            selectedUserId={selectedUserId}
+            setSelectedUserId={setSelectedUserId}
+            onlinePeople={offlinePeople}
+            userId={userId}
+            online={false}
+          />
         ))}
       </div>
       <div className='flex flex-col bg-primary-800 w-full p-2'>
@@ -149,15 +173,15 @@ function Chats() {
           {selectedUserId && (
             <div className='relative h-full'>
               <div className='overflow-y-scroll absolute inset-0 py-1'>
-                {messagesWithoutDuplicates.map((message, i) => (
+                {messagesWithoutDuplicates.map((message) => (
                   <div
                     className={
                       '' +
                       (message.isOurs
-                        ? 'bg-blue-900 text-white p-2 rounded-full m-1 w-fit ml-auto'
-                        : 'bg-white text-gray-800 rounded-full m-1 p-2 w-fit')
+                        ? 'bg-blue-900 text-white p-2 rounded-xl m-1 w-fit ml-auto'
+                        : 'bg-white text-gray-800 rounded-xl m-1 p-2 w-fit')
                     }
-                    key={i}
+                    key={message._id}
                   >
                     {message.text}
                   </div>
