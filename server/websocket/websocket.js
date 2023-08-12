@@ -42,8 +42,8 @@ const handleWebSocketConnection = (server) => {
       if (recipient && text) {
         const messageDoc = await Message.create({
           sender: connection.userId,
-          text: text,
           recipient,
+          text: text,
         });
 
         [...wss.clients]
@@ -53,7 +53,7 @@ const handleWebSocketConnection = (server) => {
               JSON.stringify({
                 text,
                 sender: connection.userId,
-                id: messageDoc._id,
+                _id: messageDoc._id,
                 timestamp: messageDoc.createdAt,
                 recipient,
               })
