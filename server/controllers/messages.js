@@ -24,7 +24,7 @@ const getMessages = async (req, res) => {
       recipient: {
         $in: [selectedUserId, ourUserId],
       },
-    }).sort({ createdAt: -1 });
+    }).sort({ createdAt: 1 });
 
     res.status(StatusCodes.OK).json({ messages: messages });
   } catch (error) {
