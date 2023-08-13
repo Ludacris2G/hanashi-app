@@ -151,7 +151,6 @@ function Chats() {
             online={true}
           />
         ))}
-        <h1>Offline People</h1>
         {Object.keys(offlinePeople).map((userId) => (
           <People
             key={userId}
@@ -186,6 +185,11 @@ function Chats() {
                     {message.text}
                   </div>
                 ))}
+                {messagesWithoutDuplicates.length === 0 && (
+                  <div className='flex items-center justify-center h-full text-lg'>
+                    start a conversation
+                  </div>
+                )}
                 <div ref={scrollReferenceDiv}></div>
               </div>
             </div>
