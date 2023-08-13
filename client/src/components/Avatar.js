@@ -20,6 +20,18 @@ function Avatar({ username, online }) {
             }}
           ></div>
         )}
+        {!online && (
+          <div
+            className='absolute rounded-full border-primary-900 border'
+            style={{
+              height: '10px',
+              width: '10px',
+              right: '2px',
+              bottom: '1px',
+              backgroundColor: 'gray',
+            }}
+          ></div>
+        )}
       </div>
     </div>
   );
