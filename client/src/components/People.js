@@ -1,7 +1,13 @@
 import React from 'react';
 import Avatar from './Avatar';
 
-function People({ setSelectedUserId, selectedUserId, onlinePeople, userId, online }) {
+function People({
+  setSelectedUserId,
+  selectedUserId,
+  onlinePeople,
+  userId,
+  online,
+}) {
   return (
     <div
       onClick={() => setSelectedUserId(userId)}
@@ -9,6 +15,7 @@ function People({ setSelectedUserId, selectedUserId, onlinePeople, userId, onlin
         ' border rounded-full border-primary-900 m-1 flex items-center gap-2 cursor-pointer ' +
         (userId === selectedUserId ? 'bg-primary-600' : '')
       }
+      style={{ cursor: 'pointer' }}
       key={userId}
     >
       <Avatar online={online} username={onlinePeople[userId]} />
