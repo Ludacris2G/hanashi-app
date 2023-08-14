@@ -6,7 +6,40 @@ const Message = require('../models/Message');
 const handleWebSocketConnection = (server) => {
   const wss = new ws.WebSocketServer({ server });
 
+  function sendOnlinePeople() {
+    [...wss.clients].forEach((client) => {
+      client.send(
+        JSON.stringify({
+          online: [...wss.clients].map((c) => ({
+            userId: c.userId,
+            username: c.username,
+          })),
+        })
+      );
+    });
+  }
+
   wss.on('connection', (connection, req) => {
+    connection.isAlive = true;
+
+    connection.timer = setInterval(() => {
+      connection.ping();
+      connection.deathTimer = setTimeout(() => {
+        connection.isAlive = false;
+        connection.terminate();
+      }, 1000);
+    }, 5000);
+
+    connection.on('pong', () => {
+      clearTimeout(connection.deathTimer);
+    });
+
+    connection.on('close', () => {
+      sendOnlinePeople();
+      clearInterval(connection.timer);
+      clearTimeout(connection.deathTimer);
+    });
+
     // read username and id from the cookie
     const { cookie } = req.headers;
     if (cookie) {
@@ -24,17 +57,9 @@ const handleWebSocketConnection = (server) => {
         });
       }
     }
+
     // send online people to all users
-    [...wss.clients].forEach((client) => {
-      client.send(
-        JSON.stringify({
-          online: [...wss.clients].map((c) => ({
-            userId: c.userId,
-            username: c.username,
-          })),
-        })
-      );
-    });
+    sendOnlinePeople();
 
     connection.on('message', async (message) => {
       const messageData = JSON.parse(message.toString());
