@@ -87,6 +87,7 @@ function Chats() {
 
   function removePeopleHighlight(e) {
     if (e.currentTarget === e.target) setSelectedUserId(null);
+    setMessages([]);
   }
 
   function sendMessage(e) {
@@ -133,34 +134,40 @@ function Chats() {
   return (
     <div className='flex h-screen w-screen'>
       <div
-        onClick={(e) => removePeopleHighlight(e)}
-        className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900'
+        className='bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900 flex flex-col'
         style={{ maxWidth: '300px' }}
       >
-        <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
-          HanashiApp 話
+        <div className='flex-grow' onClick={(e) => removePeopleHighlight(e)}>
+          <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
+            HanashiApp 話
+          </div>
+          {user}
+          {Object.keys(onlinePeople).map((userId) => (
+            <People
+              key={userId}
+              selectedUserId={selectedUserId}
+              setSelectedUserId={setSelectedUserId}
+              onlinePeople={onlinePeople}
+              userId={userId}
+              online={true}
+            />
+          ))}
+          {Object.keys(offlinePeople).map((userId) => (
+            <People
+              key={userId}
+              selectedUserId={selectedUserId}
+              setSelectedUserId={setSelectedUserId}
+              onlinePeople={offlinePeople}
+              userId={userId}
+              online={false}
+            />
+          ))}
         </div>
-        {user}
-        {Object.keys(onlinePeople).map((userId) => (
-          <People
-            key={userId}
-            selectedUserId={selectedUserId}
-            setSelectedUserId={setSelectedUserId}
-            onlinePeople={onlinePeople}
-            userId={userId}
-            online={true}
-          />
-        ))}
-        {Object.keys(offlinePeople).map((userId) => (
-          <People
-            key={userId}
-            selectedUserId={selectedUserId}
-            setSelectedUserId={setSelectedUserId}
-            onlinePeople={offlinePeople}
-            userId={userId}
-            online={false}
-          />
-        ))}
+        <div className='text-center'>
+          <button className='p-3 bg-primary-500 w-full border rounded-xs'>
+            log out
+          </button>
+        </div>
       </div>
       <div className='flex flex-col bg-primary-800 w-full p-2'>
         <div className='flex-grow text-primary-100'>
