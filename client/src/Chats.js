@@ -110,6 +110,7 @@ function Chats() {
   function checkTocken() {
     const token = localStorage.getItem('token');
     if (!token) {
+      axios.post('/api/v1/logout');
       setUsername(null);
       setId(null);
       navigate('/login');
@@ -129,6 +130,16 @@ function Chats() {
     const intervalId = setInterval(checkTocken, 60000);
 
     return () => clearInterval(intervalId);
+  }
+
+  async function logout() {
+    const response = await axios.post('/api/v1/logout');
+    if (response) {
+      localStorage.removeItem('token');
+      setUsername(null);
+      setId(null);
+      navigate('/login');
+    }
   }
 
   return (
@@ -164,7 +175,10 @@ function Chats() {
           ))}
         </div>
         <div className='text-center'>
-          <button className='p-3 bg-primary-500 w-full border rounded-xs'>
+          <button
+            onClick={logout}
+            className='p-3 bg-primary-500 w-full border rounded-xs'
+          >
             log out
           </button>
         </div>
