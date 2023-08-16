@@ -18,6 +18,7 @@ const connectDB = require('./db/connect');
 const authRouter = require('./routes/auth');
 const messageRouter = require('./routes/messages');
 const peopleRouter = require('./routes/people');
+const logoutRouter = require('./routes/logout');
 
 // cookies
 const cookieParser = require('cookie-parser');
@@ -47,6 +48,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1', messageRouter);
 app.use('/api/v1', peopleRouter);
+app.use('/api/v1/logout', logoutRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
