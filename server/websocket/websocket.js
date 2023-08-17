@@ -25,8 +25,10 @@ const handleWebSocketConnection = (server) => {
     connection.timer = setInterval(() => {
       connection.ping();
       connection.deathTimer = setTimeout(() => {
+        clearInterval(connection.timer);
         connection.isAlive = false;
         connection.terminate();
+        sendOnlinePeople();
       }, 1000);
     }, 5000);
 
@@ -34,11 +36,11 @@ const handleWebSocketConnection = (server) => {
       clearTimeout(connection.deathTimer);
     });
 
-    connection.on('close', () => {
-      sendOnlinePeople();
-      clearInterval(connection.timer);
-      clearTimeout(connection.deathTimer);
-    });
+    // connection.on('close', () => {
+    //   sendOnlinePeople();
+    //   clearInterval(connection.timer);
+    //   clearTimeout(connection.deathTimer);
+    // });
 
     // read username and id from the cookie
     const { cookie } = req.headers;
