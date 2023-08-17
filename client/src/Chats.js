@@ -80,7 +80,7 @@ function Chats() {
     const people = {};
 
     peopleArr.forEach(({ userId, username }) => {
-      if (userId !== id && id) people[userId] = username;
+      if (userId !== id && id && userId) people[userId] = username;
     });
     setOnlinePeople(people);
   }
@@ -133,12 +133,17 @@ function Chats() {
   }
 
   async function logout() {
+    if (ws) {
+      ws.close();
+    }
+
     const response = await axios.post('/api/v1/logout');
     if (response) {
       localStorage.removeItem('token');
       setUsername(null);
       setId(null);
       navigate('/login');
+      setWs(null);
     }
   }
 
@@ -177,9 +182,24 @@ function Chats() {
         <div className='text-center'>
           <button
             onClick={logout}
-            className='p-3 bg-primary-500 w-full border rounded-xs'
+            className='flex p-3 bg-primary-500 w-full border rounded-xs justify-center'
           >
-            log out
+            {' '}
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75'
+              />
+            </svg>
+            <p className='items'>log out</p>
           </button>
         </div>
       </div>
