@@ -90,13 +90,13 @@ function Chats() {
     setMessages([]);
   }
 
-  function sendMessage(e) {
-    e.preventDefault();
-
+  function sendMessage(e, file = null) {
+    if (e) e.preventDefault();
     ws.send(
       JSON.stringify({
         recipient: selectedUserId,
         text: newMessageText,
+        file,
       })
     );
 
@@ -145,6 +145,18 @@ function Chats() {
       navigate('/login');
       setWs(null);
     }
+  }
+
+  function sendFile(e) {
+    const reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+
+    reader.onload = () => {
+      sendMessage(null, {
+        data: reader.result,
+        name: e.target.files[0].name,
+      });
+    };
   }
 
   return (
@@ -245,9 +257,27 @@ function Chats() {
               className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
               placeholder='Type here broseph'
             />
+            <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
+              <input type='file' className='hidden' onChange={sendFile} />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='h-4 w-full'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13'
+                />
+              </svg>
+            </label>
             <button
+              disabled={!newMessageText}
               type='submit'
-              className='bg-primary-900 p-3 text-primary-100 rounded-full'
+              className='bg-primary-900 p-3 text-primary-100 rounded-full cursor-pointer'
             >
               <svg
                 viewBox='0 0 24 24'
