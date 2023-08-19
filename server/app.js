@@ -29,6 +29,8 @@ const errorHandlerMiddleware = require('./middleware/error-handler.js');
 const handleWebSocketConnection = require('./websocket/websocket');
 
 // app use
+app.use('/uploads', express.static(__dirname + '/uploads'));
+
 app.use(express.json());
 app.use(helmet());
 app.use(
