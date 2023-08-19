@@ -72,9 +72,17 @@ function Chats() {
     if (messageData.online) {
       showOnlinePeople(messageData.online);
     } else {
-      setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
+      setSelectedUserId((prevSelectedUserId) => {
+        console.log(messageData.sender === prevSelectedUserId);
+        console.log(messageData.sender, prevSelectedUserId);
+        if (messageData.sender === prevSelectedUserId) {
+          setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
+        }
+        return prevSelectedUserId;
+      });
     }
   }
+  console.warn(selectedUserId);
 
   function showOnlinePeople(peopleArr) {
     const people = {};
@@ -171,16 +179,17 @@ function Chats() {
           </div>
           {user}
           {Object.keys(onlinePeople).map((userId) => (
-            <People
-              key={userId}
-              selectedUserId={selectedUserId}
-              setSelectedUserId={setSelectedUserId}
-              onlinePeople={onlinePeople}
-              userId={userId}
-              online={true}
-            />
+            <div key={userId} onClick={() => setSelectedUserId(userId)}>
+              <People
+                key={userId}
+                selectedUserId={selectedUserId}
+                onlinePeople={onlinePeople}
+                userId={userId}
+                online={true}
+              />
+            </div>
           ))}
-          {Object.keys(offlinePeople).map((userId) => (
+          {/* {Object.keys(offlinePeople).map((userId) => (
             <People
               key={userId}
               selectedUserId={selectedUserId}
@@ -189,7 +198,7 @@ function Chats() {
               userId={userId}
               online={false}
             />
-          ))}
+          ))} */}
         </div>
         <div className='text-center'>
           <button
