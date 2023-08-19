@@ -1,4 +1,5 @@
 const ws = require('ws');
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const { UnauthenticatedError } = require('../errors');
 const Message = require('../models/Message');
@@ -65,7 +66,28 @@ const handleWebSocketConnection = (server) => {
 
     connection.on('message', async (message) => {
       const messageData = JSON.parse(message.toString());
-      const { recipient, text } = messageData;
+      const { recipient, text, file } = messageData;
+
+      if (file) {
+        const [, mimeType, base64WithoutPrefix] = file.data.match(
+          /^data:(.*);base64,(.*)$/
+        );
+        console.log(base64WithoutPrefix);
+        const parts = file.name.split('.');
+        const ext = parts[parts.length - 1];
+        const filename = Date.now() + '.' + ext;
+        const path = process.cwd() + '/uploads/' + filename;
+
+        const bufferData = Buffer.from(base64WithoutPrefix, 'base64');
+        fs.writeFile(path, bufferData, (error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('file saved: ' + path);
+          }
+        });
+      }
+
       if (recipient && text) {
         const messageDoc = await Message.create({
           sender: connection.userId,
