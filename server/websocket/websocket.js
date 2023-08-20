@@ -37,11 +37,11 @@ const handleWebSocketConnection = (server) => {
       clearTimeout(connection.deathTimer);
     });
 
-    // connection.on('close', () => {
-    //   sendOnlinePeople();
-    //   clearInterval(connection.timer);
-    //   clearTimeout(connection.deathTimer);
-    // });
+    connection.on('close', () => {
+      sendOnlinePeople();
+      clearInterval(connection.timer);
+      clearTimeout(connection.deathTimer);
+    });
 
     // read username and id from the cookie
     const { cookie } = req.headers;
@@ -52,12 +52,22 @@ const handleWebSocketConnection = (server) => {
       const token = tokenCookieString?.split('=')[1];
 
       if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
-          if (err) throw new UnauthenticatedError('Unauthorized');
-          const { userId, name } = userData;
-          connection.userId = userId;
-          connection.username = name;
-        });
+        try {
+          jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
+            if (err) throw new UnauthenticatedError('Unauthorized');
+            const { userId, name } = userData;
+            connection.userId = userId;
+            connection.username = name;
+          });
+        } catch (error) {
+          if (error instanceof UnauthenticatedError) {
+            connection.send(
+              JSON.stringify({
+                logout: true,
+              })
+            );
+          }
+        }
       }
     }
 
