@@ -12,7 +12,7 @@ function PublicLayout() {
 
   return (
     <>
-      <div className='bg-primary-200 dark:bg-primary-950 h-screen flex relative items-center'>
+      <div className='bg-primary-100 dark:bg-primary-950 h-screen flex relative items-center'>
         {/* THEME TOGGLE BUTTON */}
         <button
           type='button'
@@ -21,7 +21,7 @@ function PublicLayout() {
           } bg-gray-300 dark:bg-gray-700 absolute`}
           onClick={toggleDarkMode}
           style={{
-            right: '1rem',
+            right: '2.5rem',
             top: '1rem',
           }}
         >
