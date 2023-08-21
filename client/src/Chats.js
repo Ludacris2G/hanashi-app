@@ -38,15 +38,17 @@ function Chats() {
 
   async function getOfflinePeople() {
     const request = await axios.get('/api/v1/people');
-    const offlinePeople = request.data.people.filter(
-      (person) =>
-        person._id !== id && !Object.keys(onlinePeople).includes(person._id)
-    );
-    const offlinePeopleObj = {};
-    offlinePeople.forEach((person) => {
-      offlinePeopleObj[person._id] = person.username;
-    });
-    setOfflinePeople(offlinePeopleObj);
+    if (request) {
+      const offlinePeople = request.data.people.filter(
+        (person) =>
+          person._id !== id && !Object.keys(onlinePeople).includes(person._id)
+      );
+      const offlinePeopleObj = {};
+      offlinePeople.forEach((person) => {
+        offlinePeopleObj[person._id] = person.username;
+      });
+      setOfflinePeople(offlinePeopleObj);
+    }
   }
 
   async function fetchMessages() {
@@ -69,12 +71,14 @@ function Chats() {
 
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
+    if (messageData.logout) {
+      localStorage.removeItem('token');
+      checkToken();
+    }
     if (messageData.online) {
       showOnlinePeople(messageData.online);
     } else {
       setSelectedUserId((prevSelectedUserId) => {
-        console.log(messageData.sender === prevSelectedUserId);
-        console.log(messageData.sender, prevSelectedUserId);
         if (messageData.sender === prevSelectedUserId) {
           setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
         }
@@ -82,7 +86,6 @@ function Chats() {
       });
     }
   }
-  console.warn(selectedUserId);
 
   function showOnlinePeople(peopleArr) {
     const people = {};
@@ -115,7 +118,7 @@ function Chats() {
     setNewMessageText('');
   }
 
-  function checkTocken() {
+  function checkToken() {
     const token = localStorage.getItem('token');
     if (!token) {
       axios.post('/api/v1/logout');
@@ -135,7 +138,7 @@ function Chats() {
       }, 1000);
     });
 
-    const intervalId = setInterval(checkTocken, 60000);
+    const intervalId = setInterval(checkToken, 60000);
 
     return () => clearInterval(intervalId);
   }
@@ -189,16 +192,17 @@ function Chats() {
               />
             </div>
           ))}
-          {/* {Object.keys(offlinePeople).map((userId) => (
-            <People
-              key={userId}
-              selectedUserId={selectedUserId}
-              setSelectedUserId={setSelectedUserId}
-              onlinePeople={offlinePeople}
-              userId={userId}
-              online={false}
-            />
-          ))} */}
+          {Object.keys(offlinePeople).map((userId) => (
+            <div key={userId} onClick={() => setSelectedUserId(userId)}>
+              <People
+                key={userId}
+                selectedUserId={selectedUserId}
+                onlinePeople={offlinePeople}
+                userId={userId}
+                online={false}
+              />
+            </div>
+          ))}
         </div>
         <div className='text-center'>
           <button
