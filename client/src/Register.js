@@ -20,12 +20,13 @@ function Register({ setUser }) {
         username,
         password,
       });
+      if (data) {
+        localStorage.setItem('token', data.token);
 
-      localStorage.setItem('token', data.token);
-
-      setLoggedInUsername(username);
-      setUser(username);
-      navigate('/chats');
+        setLoggedInUsername(username);
+        setUser(username);
+        navigate('/chats');
+      }
     } catch (error) {
       setError(error.response.data.msg);
       setTimeout(() => setError(null), 3000);
