@@ -13,6 +13,7 @@ HanashiApp is a chat application built using the MERN stack. It enables users to
 
 - User Registration: Users can register and create accounts to start messaging.
 - Real-time Messaging: Users can send and receive messages in real-time.
+- Image Upload: Users can upload images in their messages, enhancing communication with visuals.
 - Message Storage: Messages are stored in a MongoDB database for later retrieval.
 - Online Status: Users' online status is tracked, and online contacts are displayed.
 - User Interface: The app offers a user-friendly interface with a clean and responsive design.
