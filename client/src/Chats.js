@@ -113,7 +113,12 @@ function Chats() {
 
     setMessages((prev) => [
       ...prev,
-      { text: newMessageText, isOurs: true, _id: new Date().toISOString() },
+      {
+        text: newMessageText,
+        isOurs: true,
+        _id: new Date().toISOString(),
+        file,
+      },
     ]);
     setNewMessageText('');
   }
@@ -166,10 +171,11 @@ function Chats() {
       sendMessage(null, {
         data: reader.result,
         name: e.target.files[0].name,
+        type: e.target.files[0].type,
       });
     };
   }
-
+  console.log(messages[messages.length - 1]);
   return (
     <div className='flex h-screen w-screen'>
       <div
@@ -228,7 +234,7 @@ function Chats() {
           </button>
         </div>
       </div>
-      <div className='flex flex-col bg-primary-800 w-full p-2'>
+      <div className='flex flex-col bg-primary-800 w-full p-2 pt-0'>
         <div className='flex-grow text-primary-100'>
           {!selectedUserId && (
             <div className='flex items-center justify-center h-full text-lg'>
@@ -248,6 +254,23 @@ function Chats() {
                     }
                     key={message._id}
                   >
+                    <div>
+                      {message.file &&
+                        message.file?.mimeType?.startsWith('image/') && (
+                          <img
+                            src={URL.createObjectURL(
+                              new Blob(
+                                [new Uint8Array(message.file.data.data)],
+                                {
+                                  type: message.file.mimeType,
+                                }
+                              )
+                            )}
+                            alt={message.file.name}
+                            className='max-w-xs max-h-xs rounded-md'
+                          />
+                        )}
+                    </div>
                     {message.text}
                   </div>
                 ))}
