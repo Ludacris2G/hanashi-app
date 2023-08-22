@@ -30,6 +30,10 @@ function Chats() {
 
   useEffect(() => {
     if (selectedUserId) fetchMessages();
+    const div = scrollReferenceDiv.current;
+    if (div) {
+      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
   }, [selectedUserId]);
 
   useEffect(() => {
@@ -175,7 +179,7 @@ function Chats() {
       });
     };
   }
-  console.log(messages[messages.length - 1]);
+
   return (
     <div className='flex h-screen w-screen'>
       <div
@@ -186,7 +190,9 @@ function Chats() {
           <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
             HanashiApp 話
           </div>
-          {user}
+          <div className='text-center border m-1 rounded-full border-primary-900'>
+            {user}
+          </div>
           {Object.keys(onlinePeople).map((userId) => (
             <div key={userId} onClick={() => setSelectedUserId(userId)}>
               <People
@@ -213,7 +219,7 @@ function Chats() {
         <div className='text-center'>
           <button
             onClick={logout}
-            className='flex p-3 bg-primary-500 w-full border rounded-xs justify-center'
+            className='flex p-3 bg-primary-500 w-full  rounded-xs justify-center'
           >
             {' '}
             <svg
@@ -279,7 +285,10 @@ function Chats() {
                     start a conversation
                   </div>
                 )}
-                <div ref={scrollReferenceDiv}></div>
+                <div
+                  className='h-2 bg-transparent'
+                  ref={scrollReferenceDiv}
+                ></div>
               </div>
             </div>
           )}
