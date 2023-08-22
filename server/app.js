@@ -9,7 +9,6 @@ const xss = require('xss-clean');
 
 const express = require('express');
 const app = express();
-const ws = require('ws');
 
 // connectDB
 const connectDB = require('./db/connect');
@@ -36,7 +35,7 @@ app.use(helmet());
 app.use(
   cors({
     credentials: true,
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_ORIGIN,
   })
 );
 app.use(xss());
