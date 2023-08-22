@@ -76,31 +76,33 @@ const handleWebSocketConnection = (server) => {
     connection.on('message', async (message) => {
       const messageData = JSON.parse(message.toString());
       const { recipient, text, file } = messageData;
-      let bufferData;
-      
+      let fileData = null;
+
       if (file) {
         const [, mimeType, base64WithoutPrefix] = file.data.match(
           /^data:(.*);base64,(.*)$/
         );
-          
-        const parts = file.name.split('.');
-        const ext = parts[parts.length - 1];
-        const filename = Date.now() + '.' + ext;
 
-        bufferData = Buffer.from(base64WithoutPrefix, 'base64');
+        const bufferData = Buffer.from(base64WithoutPrefix, 'base64');
+        fileData = {
+          data: bufferData,
+          name: file.name,
+          mimeType: file.type,
+        };
       }
 
       if (recipient && text) {
-        const messageDoc = await Message.create({
+        const messageDocData = {
           sender: connection.userId,
           recipient,
           text: text,
-          file: {
-            data: bufferData,
-            name: file.name,
-            mimeType: file.type,
-          },
-        });
+        };
+
+        if (fileData) {
+          messageDocData.file = fileData;
+        }
+
+        const messageDoc = await Message.create(messageDocData);
 
         [...wss.clients]
           .filter((client) => client.userId === recipient)
