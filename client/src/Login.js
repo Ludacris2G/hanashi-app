@@ -15,18 +15,21 @@ function Login({ setUser }) {
   async function logIn(e) {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/v1/auth/login', {
+      console.log(process.env.REACT_APP_BASE_URL);
+      const response = await axios.post(`/api/v1/auth/login`, {
         username,
         password,
       });
 
-      localStorage.setItem('token', data.token);
+      if (response.data) {
+        localStorage.setItem('token', response.data.token);
 
-      setLoggedInUsername(username);
-      setUser(username);
-      navigate('/chats');
+        setLoggedInUsername(username);
+        setUser(username);
+        navigate('/chats');
+      }
     } catch (error) {
-      setError(error.response.data.msg);
+      setError(error.response.data.msg || 'An error occurred');
       setTimeout(() => setError(null), 3000);
     }
   }
