@@ -43,6 +43,7 @@ function Chats() {
   async function getOfflinePeople() {
     const request = await axios.get('/api/v1/people');
     if (request) {
+      console.log('offline people request: ', request.data.people);
       const offlinePeople = request.data.people.filter(
         (person) =>
           person._id !== id && !Object.keys(onlinePeople).includes(person._id)
@@ -57,6 +58,7 @@ function Chats() {
 
   async function fetchMessages() {
     const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
+    console.log('fetch messages: ', messages.data.messages);
     const mappedMessages = messages.data.messages.map((message) => {
       if (message.sender === id) {
         return {
@@ -80,8 +82,10 @@ function Chats() {
       checkToken();
     }
     if (messageData.online) {
+      console.log('online people received: ', messageData.online);
       showOnlinePeople(messageData.online);
     } else {
+      console.log('message received: ', messageData);
       setSelectedUserId((prevSelectedUserId) => {
         if (messageData.sender === prevSelectedUserId) {
           setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
@@ -97,6 +101,7 @@ function Chats() {
     peopleArr.forEach(({ userId, username }) => {
       if (userId !== id && id && userId) people[userId] = username;
     });
+    console.log('show online people: ', people);
     setOnlinePeople(people);
   }
 
@@ -107,6 +112,7 @@ function Chats() {
 
   function sendMessage(e, file = null) {
     if (e) e.preventDefault();
+    console.log('Sending message: ', selectedUserId, newMessageText);
     ws.send(
       JSON.stringify({
         recipient: selectedUserId,
