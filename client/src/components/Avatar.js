@@ -7,7 +7,7 @@ function Avatar({ username, online }) {
       style={{ width: '35px', height: '35px' }}
     >
       <div className='text-center w-full text-primary-100 font-bold'>
-        {username[0]}
+        {username && username[0]}
         {online && (
           <div
             className='absolute rounded-full border-primary-900 border'
