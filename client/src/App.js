@@ -2,7 +2,7 @@ import axios from 'axios';
 import Register from './Register';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import {  useState } from 'react';
+import { useState } from 'react';
 import NotFound from './NotFound';
 import Chats from './Chats';
 import ProtectedRoute from './ProtectedRoute';
@@ -12,7 +12,8 @@ import PublicLayout from './components/PublicLayout';
 function App() {
   const [user, setUser] = useState(null);
 
-  axios.defaults.baseURL = 'http://localhost:5001/';
+  axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+  console.log(process.env.REACT_APP_BASE_URL);
   axios.defaults.withCredentials = true;
 
   return (
