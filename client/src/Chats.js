@@ -144,7 +144,8 @@ function Chats() {
   }
 
   function connectToWs() {
-    const ws = new WebSocket(`ws://${process.env.REACT_APP_WS_URL}`);
+    const wsProtocol = window.location.protocol === 'https' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${wsProtocol}://${process.env.REACT_APP_WS_URL}`);
     setWs(ws);
     ws.addEventListener('message', handleMessage);
     ws.addEventListener('close', () => {
