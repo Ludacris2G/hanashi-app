@@ -13,7 +13,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
-  console.log(process.env.REACT_APP_BASE_URL);
+  console.log(process.env);
   axios.defaults.withCredentials = true;
 
   return (
