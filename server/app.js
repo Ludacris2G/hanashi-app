@@ -28,8 +28,6 @@ const errorHandlerMiddleware = require('./middleware/error-handler.js');
 const handleWebSocketConnection = require('./websocket/websocket');
 
 // app use
-app.use('/uploads', express.static(__dirname + '/uploads'));
-
 app.use(express.json());
 app.use(helmet());
 app.use(
@@ -42,9 +40,13 @@ app.use(xss());
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Works' });
+  console.log(process.env, process.env.PORT);
+  res.status(200).json({
+    port: process.env.PORT,
+    message: 'Works',
+    env: process.env,
+  });
 });
-
 // routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1', messageRouter);
