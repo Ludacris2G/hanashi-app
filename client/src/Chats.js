@@ -43,7 +43,6 @@ function Chats() {
   async function getOfflinePeople() {
     const request = await axios.get('/api/v1/people');
     if (request) {
-      console.log('offline people request: ', request.data.people);
       const offlinePeople = request.data.people.filter(
         (person) =>
           person._id !== id && !Object.keys(onlinePeople).includes(person._id)
@@ -82,10 +81,8 @@ function Chats() {
       checkToken();
     }
     if (messageData.online) {
-      console.log('online people received: ', messageData.online);
       showOnlinePeople(messageData.online);
     } else {
-      console.log('message received: ', messageData);
       setSelectedUserId((prevSelectedUserId) => {
         if (messageData.sender === prevSelectedUserId) {
           setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
@@ -101,7 +98,6 @@ function Chats() {
     peopleArr.forEach(({ userId, username }) => {
       if (userId !== id && id && userId) people[userId] = username;
     });
-    console.log('show online people: ', people);
     setOnlinePeople(people);
   }
 
@@ -145,6 +141,8 @@ function Chats() {
 
   function connectToWs() {
     const wsProtocol = window.location.protocol === 'https' ? 'wss' : 'ws';
+    console.log('wsProtocol: ', wsProtocol);
+    console.log('window protocol: ', window.location.protocol);
     const ws = new WebSocket(`${wsProtocol}://${process.env.REACT_APP_WS_URL}`);
     setWs(ws);
     ws.addEventListener('message', handleMessage);
