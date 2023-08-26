@@ -13,19 +13,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
-  console.log(process.env);
   axios.defaults.withCredentials = true;
-  async function testBackend() {
-    try {
-      const response = await axios.get(
-        'https://hanshi-app-backend.onrender.com/'
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  testBackend();
   return (
     <>
       <BrowserRouter>
