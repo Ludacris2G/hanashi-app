@@ -21,7 +21,7 @@ const handleWebSocketConnection = (server) => {
 
   wss.on('connection', (connection, req) => {
     connection.isAlive = true;
-    console.log('connected');
+    console.log('connected at', new Date());
     connection.timer = setInterval(() => {
       connection.ping();
       connection.deathTimer = setTimeout(() => {
@@ -45,10 +45,11 @@ const handleWebSocketConnection = (server) => {
     // read username and id from the cookie
     const { cookie } = req.headers;
     if (cookie) {
+      console.log('COOKIE: ', cookie);
       const tokenCookieString = cookie
-        ?.split(';')
+        .split(';')
         .find((str) => str.startsWith('token='));
-      const token = tokenCookieString?.split('=')[1];
+      const token = tokenCookieString.split('=')[1];
       if (token) {
         try {
           jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
@@ -67,6 +68,8 @@ const handleWebSocketConnection = (server) => {
             );
           }
         }
+      } else {
+        throw new UnauthenticatedError('No cookie detected');
       }
     }
 
