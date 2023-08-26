@@ -109,6 +109,8 @@ function Chats() {
   function sendMessage(e, file = null) {
     if (e) e.preventDefault();
     console.log('Sending message: ', selectedUserId, newMessageText);
+    console.log('my id: ', id);
+    console.log('ws state: ', ws.readyState);
     ws.send(
       JSON.stringify({
         recipient: selectedUserId,
@@ -141,12 +143,9 @@ function Chats() {
 
   function connectToWs() {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    console.log('wsProtocol: ', wsProtocol);
-    console.log('window protocol: ', window.location.protocol);
-    console.log(process.env.REACT_APP_WS_URL);
     const ws = new WebSocket(`${wsProtocol}://${process.env.REACT_APP_WS_URL}`);
-    console.log(`${wsProtocol}://${process.env.REACT_APP_WS_URL}`);
     setWs(ws);
+    console.log('ws:', ws);
     ws.addEventListener('message', handleMessage);
     ws.addEventListener('close', () => {
       setTimeout(() => {
