@@ -4,8 +4,7 @@ const { UnauthenticatedError } = require('../errors');
 const Message = require('../models/Message');
 
 const handleWebSocketConnection = (server) => {
-  const wss = new ws.WebSocketServer({ server });
-
+  const wss = new ws.WebSocketServer({ server, clientTracking: true });
   function sendOnlinePeople() {
     [...wss.clients].forEach((client) => {
       client.send(
@@ -45,11 +44,11 @@ const handleWebSocketConnection = (server) => {
     // read username and id from the cookie
     const { cookie } = req.headers;
     if (cookie) {
-      console.log('COOKIE: ', cookie);
       const tokenCookieString = cookie
         .split(';')
         .find((str) => str.startsWith('token='));
       const token = tokenCookieString.split('=')[1];
+      console.log('COOKIE: ', token);
       if (token) {
         try {
           jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
@@ -69,7 +68,11 @@ const handleWebSocketConnection = (server) => {
           }
         }
       } else {
-        throw new UnauthenticatedError('No cookie detected');
+        connection.send(
+          JSON.stringify({
+            logout: true,
+          })
+        );
       }
     }
 
