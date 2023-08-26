@@ -21,7 +21,7 @@ const handleWebSocketConnection = (server) => {
 
   wss.on('connection', (connection, req) => {
     connection.isAlive = true;
-
+    console.log('connected');
     connection.timer = setInterval(() => {
       connection.ping();
       connection.deathTimer = setTimeout(() => {
@@ -49,7 +49,6 @@ const handleWebSocketConnection = (server) => {
         ?.split(';')
         .find((str) => str.startsWith('token='));
       const token = tokenCookieString?.split('=')[1];
-
       if (token) {
         try {
           jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
@@ -59,6 +58,7 @@ const handleWebSocketConnection = (server) => {
             connection.username = name;
           });
         } catch (error) {
+          console.log('logout true');
           if (error instanceof UnauthenticatedError) {
             connection.send(
               JSON.stringify({
@@ -74,6 +74,13 @@ const handleWebSocketConnection = (server) => {
     sendOnlinePeople();
 
     connection.on('message', async (message) => {
+      if (!connection.userId) {
+        connection.send(
+          JSON.stringify({
+            logout: true,
+          })
+        );
+      }
       const messageData = JSON.parse(message.toString());
       const { recipient, text, file } = messageData;
       let fileData = null;
@@ -92,6 +99,7 @@ const handleWebSocketConnection = (server) => {
       }
 
       if (recipient && text) {
+        console.log('sender id', connection.userId);
         const messageDocData = {
           sender: connection.userId,
           recipient,
