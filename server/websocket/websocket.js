@@ -4,7 +4,7 @@ const { UnauthenticatedError } = require('../errors');
 const Message = require('../models/Message');
 
 const handleWebSocketConnection = (server) => {
-  const wss = new ws.WebSocketServer({ server, clientTracking: true });
+  const wss = new ws.WebSocketServer({ server });
 
   function sendOnlinePeople() {
     [...wss.clients].forEach((client) => {
