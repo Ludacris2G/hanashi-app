@@ -14,7 +14,6 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-
   if (!username || !password) {
     throw new BadRequestError('Please provide email and password');
   }
@@ -32,7 +31,6 @@ const login = async (req, res) => {
   }
 
   const token = await user.createJWT();
-
   res
     .cookie('token', token, { httpOnly: true, secure: true })
     .status(StatusCodes.OK)
