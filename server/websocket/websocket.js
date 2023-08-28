@@ -50,45 +50,46 @@ const handleWebSocketConnection = (server) => {
       });
 
       // read username and id from the cookie
-      const { cookie } = req.headers;
-      console.log('cookie: ', cookie);
-      console.log('headers: ', req.headers);
-      if (cookie) {
-        const tokenCookieString = cookie
-          .split(';')
-          .find((str) => str.startsWith('token='));
-        const token = tokenCookieString.split('=')[1];
-        console.log('COOKIE: ', token);
-        if (token) {
-          try {
-            jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
-              if (err) throw new UnauthenticatedError('Unauthorized');
-              const { userId, name } = userData;
-              connection.userId = userId;
-              connection.username = name;
-            });
-          } catch (error) {
-            console.log('logout true');
-            if (error instanceof UnauthenticatedError) {
-              console.log('logged out from unauthenticated error catch');
-              connection.send(
-                JSON.stringify({
-                  logout: true,
-                  location: 'error catch',
-                })
-              );
-            }
+      // const { cookie } = req.headers;
+      // console.log('req url: ', req.url);
+      // if (cookie) {
+      //   const tokenCookieString = cookie
+      //     .split(';')
+      //     .find((str) => str.startsWith('token='));
+      //   const token = tokenCookieString.split('=')[1];
+      //   console.log('COOKIE: ', token);
+      const token = req.url.split('?token=')[1];
+      if (token) {
+        try {
+          jwt.verify(token, process.env.JWT_SECRET, {}, (err, userData) => {
+            if (err) throw new UnauthenticatedError('Unauthorized');
+            const { userId, name } = userData;
+            connection.userId = userId;
+            connection.username = name;
+            console.log(connection.username);
+          });
+        } catch (error) {
+          console.log('logout true');
+          if (error instanceof UnauthenticatedError) {
+            console.log('logged out from unauthenticated error catch');
+            connection.send(
+              JSON.stringify({
+                logout: true,
+                location: 'error catch',
+              })
+            );
           }
-        } else {
-          console.log('logged out from token check');
-          connection.send(
-            JSON.stringify({
-              logout: true,
-              location: 'token check',
-            })
-          );
         }
+      } else {
+        console.log('logged out from token check');
+        connection.send(
+          JSON.stringify({
+            logout: true,
+            location: 'token check',
+          })
+        );
       }
+      // }
 
       // send online people to all users
       sendOnlinePeople();
