@@ -16,7 +16,9 @@ function Chats() {
   const navigate = useNavigate();
   const scrollReferenceDiv = useRef();
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
+  const token = localStorage.getItem('token');
 
+  console.warn('token: ', token);
   useEffect(() => {
     connectToWs();
   }, [id]);
@@ -144,7 +146,9 @@ function Chats() {
 
   function connectToWs() {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${wsProtocol}://${process.env.REACT_APP_WS_URL}`);
+    const ws = new WebSocket(
+      `${wsProtocol}://${process.env.REACT_APP_WS_URL}?token=${token}`
+    );
     setWs(ws);
     console.log('ws:', ws);
     ws.addEventListener('message', handleMessage);
@@ -160,12 +164,11 @@ function Chats() {
   }
 
   async function logout() {
-    if (ws) {
-      ws.close();
-    }
-
     const response = await axios.post('/api/v1/logout');
     if (response) {
+      if (ws) {
+        ws.close();
+      }
       localStorage.removeItem('token');
       setUsername(null);
       setId(null);
