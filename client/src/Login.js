@@ -15,13 +15,13 @@ function Login({ setUser }) {
   async function logIn(e) {
     e.preventDefault();
     try {
-      console.log(process.env.REACT_APP_BASE_URL);
       const response = await axios.post(`/api/v1/auth/login`, {
         username,
         password,
       });
 
       if (response.data) {
+        console.log('we got token');
         localStorage.setItem('token', response.data.token);
 
         setLoggedInUsername(username);
@@ -30,6 +30,7 @@ function Login({ setUser }) {
       }
     } catch (error) {
       setError(error.response.data.msg || 'An error occurred');
+      console.log(error);
       setTimeout(() => setError(null), 3000);
     }
   }
