@@ -51,6 +51,7 @@ const handleWebSocketConnection = (server) => {
 
       // read username and id from the cookie
       const { cookie } = req.headers;
+      console.log('cookie: ', cookie);
       if (cookie) {
         const tokenCookieString = cookie
           .split(';')
@@ -72,6 +73,7 @@ const handleWebSocketConnection = (server) => {
               connection.send(
                 JSON.stringify({
                   logout: true,
+                  location: 'error catch',
                 })
               );
             }
@@ -81,6 +83,7 @@ const handleWebSocketConnection = (server) => {
           connection.send(
             JSON.stringify({
               logout: true,
+              location: 'token check',
             })
           );
         }
