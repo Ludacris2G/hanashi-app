@@ -52,6 +52,7 @@ const handleWebSocketConnection = (server) => {
       // read username and id from the cookie
       const { cookie } = req.headers;
       console.log('cookie: ', cookie);
+      console.log('headers: ', req.headers);
       if (cookie) {
         const tokenCookieString = cookie
           .split(';')
