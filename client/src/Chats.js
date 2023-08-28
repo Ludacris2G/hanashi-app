@@ -77,6 +77,7 @@ function Chats() {
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
     if (messageData.logout) {
+      console.log('logout received from: ', messageData.location);
       localStorage.removeItem('token');
       checkToken();
     }
