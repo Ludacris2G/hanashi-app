@@ -14,11 +14,9 @@ export function UserContextProvider({ children }) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         const isValid = await axios.get('/api/v1/auth/profile');
-        console.log('token is valid');
         setUsername(isValid.data.decoded.name);
         setId(isValid.data.decoded.userId);
       } catch (error) {
-        console.log('invalid token!!!');
         setUsername(null);
         setId(null);
         localStorage.removeItem('token');
