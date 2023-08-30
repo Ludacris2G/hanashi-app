@@ -18,7 +18,6 @@ function Chats() {
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
   const token = localStorage.getItem('token');
 
-  console.warn('token: ', token);
   useEffect(() => {
     connectToWs();
   }, [id]);
@@ -150,7 +149,6 @@ function Chats() {
       `${wsProtocol}://${process.env.REACT_APP_WS_URL}?token=${token}`
     );
     setWs(ws);
-    console.log('ws:', ws);
     ws.addEventListener('message', handleMessage);
     ws.addEventListener('close', () => {
       setTimeout(() => {
