@@ -8,9 +8,15 @@ import Chats from './Chats';
 import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import PublicLayout from './components/PublicLayout';
+import nightwind from 'nightwind/helper';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    nightwind.toggle();
+  };
 
   axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
   axios.defaults.withCredentials = true;
@@ -20,8 +26,26 @@ function App() {
         <Routes>
           {/* Public routes: */}
           <Route element={<PublicLayout />}>
-            <Route path='/' element={<Register setUser={setUser} />} />
-            <Route path='/login' element={<Login setUser={setUser} />} />
+            <Route
+              path='/'
+              element={
+                <Register
+                  toggleDarkMode={toggleDarkMode}
+                  isDarkMode={isDarkMode}
+                  setUser={setUser}
+                />
+              }
+            />
+            <Route
+              path='/login'
+              element={
+                <Login
+                  toggleDarkMode={toggleDarkMode}
+                  isDarkMode={isDarkMode}
+                  setUser={setUser}
+                />
+              }
+            />
           </Route>
 
           {/* Private route: Chats */}
@@ -30,7 +54,10 @@ function App() {
               path='/chats'
               element={
                 <ProtectedRoute user={user} redirectPath='/'>
-                  <Chats />
+                  <Chats
+                    toggleDarkMode={toggleDarkMode}
+                    isDarkMode={isDarkMode}
+                  />
                 </ProtectedRoute>
               }
             ></Route>
