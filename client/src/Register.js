@@ -3,8 +3,9 @@ import nightwind from 'nightwind/helper';
 import axios from 'axios';
 import { UserContext } from './UserContext';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
+import LoginThemeButton from './components/LoginThemeButton';
 
-function Register({ setUser }) {
+function Register({ setUser, toggleDarkMode, isDarkMode }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -41,6 +42,10 @@ function Register({ setUser }) {
 
   return (
     <>
+      <LoginThemeButton
+        toggleDarkMode={toggleDarkMode}
+        isDarkMode={isDarkMode}
+      />
       {/* REGISTER FORM */}
       <form
         style={{ width: '200px' }}
