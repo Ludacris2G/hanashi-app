@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { uniqBy } from 'lodash';
 import axios from 'axios';
 import People from './components/People';
+import ThemeButton from './components/ThemeButton';
 
-function Chats() {
+function Chats({ toggleDarkMode, isDarkMode }) {
   const [ws, setWs] = useState(null);
   const [onlinePeople, setOnlinePeople] = useState({});
   const [offlinePeople, setOfflinePeople] = useState({});
@@ -198,6 +199,11 @@ function Chats() {
           <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
             HanashiApp 話
           </div>
+          <ThemeButton
+            toggleDarkMode={toggleDarkMode}
+            isDarkMode={isDarkMode}
+            className='mx-auto'
+          />
           <div className='text-center border m-1 rounded-full border-primary-900'>
             {user}
           </div>
