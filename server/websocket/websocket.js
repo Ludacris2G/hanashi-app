@@ -13,6 +13,7 @@ const handleWebSocketConnection = (server) => {
     },
   });
   function sendOnlinePeople() {
+    console.log(wss.clients);
     [...wss.clients].forEach((client) => {
       client.send(
         JSON.stringify({
@@ -35,6 +36,7 @@ const handleWebSocketConnection = (server) => {
           clearInterval(connection.timer);
           connection.isAlive = false;
           connection.terminate();
+          console.log('connecion killed');
           sendOnlinePeople();
         }, 1000);
       }, 5000);
@@ -44,9 +46,12 @@ const handleWebSocketConnection = (server) => {
       });
 
       connection.on('close', () => {
-        sendOnlinePeople();
         clearInterval(connection.timer);
         clearTimeout(connection.deathTimer);
+        connection.isAlive = false;
+        connection.terminate();
+        sendOnlinePeople();
+        console.log('connection closed at: ', new Date());
       });
 
       // read username and id from the cookie
@@ -66,12 +71,9 @@ const handleWebSocketConnection = (server) => {
             const { userId, name } = userData;
             connection.userId = userId;
             connection.username = name;
-            console.log(connection.username);
           });
         } catch (error) {
-          console.log('logout true');
           if (error instanceof UnauthenticatedError) {
-            console.log('logged out from unauthenticated error catch');
             connection.send(
               JSON.stringify({
                 logout: true,
@@ -81,7 +83,6 @@ const handleWebSocketConnection = (server) => {
           }
         }
       } else {
-        console.log('logged out from token check');
         connection.send(
           JSON.stringify({
             logout: true,

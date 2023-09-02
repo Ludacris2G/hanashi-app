@@ -65,8 +65,8 @@ const start = async () => {
     const server = app.listen(port, () =>
       console.log(`Listening on port ${port}`)
     );
-
-    handleWebSocketConnection(server);
+    
+    handleWebSocketConnection(server, app);
   } catch (error) {
     console.log(error.message);
   }
