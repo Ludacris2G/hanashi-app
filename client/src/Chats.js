@@ -17,7 +17,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   const navigate = useNavigate();
   const scrollReferenceDiv = useRef();
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     connectToWs();
@@ -59,7 +58,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
 
   async function fetchMessages() {
     const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
-    console.log('fetch messages: ', messages.data.messages);
     const mappedMessages = messages.data.messages.map((message) => {
       if (message.sender === id) {
         return {
@@ -79,7 +77,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
     if (messageData.logout) {
-      console.log('logout received from: ', messageData.location);
       localStorage.removeItem('token');
       checkToken();
     }
@@ -97,7 +94,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
 
   function showOnlinePeople(peopleArr) {
     const people = {};
-
+    console.log(peopleArr);
     peopleArr.forEach(({ userId, username }) => {
       if (userId !== id && id && userId) people[userId] = username;
     });
@@ -145,13 +142,18 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   }
 
   function connectToWs() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return;
+    }
+
     const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const ws = new WebSocket(
       `${wsProtocol}://${process.env.REACT_APP_WS_URL}?token=${token}`
     );
     setWs(ws);
     ws.addEventListener('message', handleMessage);
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', (event) => {
       setTimeout(() => {
         connectToWs();
       }, 1000);
@@ -166,8 +168,11 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     const response = await axios.post('/api/v1/logout');
     if (response) {
       if (ws) {
+        console.log('ws closed');
         ws.close();
+        ws.removeEventListener('message', handleMessage);
       }
+      console.log(ws);
       localStorage.removeItem('token');
       setUsername(null);
       setId(null);
