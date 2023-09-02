@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 function PublicLayout() {
   return (
     <>
-      <div className='bg-primary-100 h-screen flex relative items-center'>
+      <div className='bg-primary-800 h-screen flex relative items-center'>
         <Outlet />
       </div>
     </>
