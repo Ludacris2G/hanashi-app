@@ -13,7 +13,7 @@ const handleWebSocketConnection = (server) => {
     },
   });
   function sendOnlinePeople() {
-    console.log(wss.clients);
+    // console.log(wss.clients);
     [...wss.clients].forEach((client) => {
       client.send(
         JSON.stringify({
@@ -34,9 +34,14 @@ const handleWebSocketConnection = (server) => {
         connection.ping();
         connection.deathTimer = setTimeout(() => {
           clearInterval(connection.timer);
-          connection.isAlive = false;
-          connection.terminate();
-          console.log('connecion killed');
+          [...wss.clients].forEach((client) => {
+            if (client.userId === connection.userId) {
+              client.isAlive = false;
+              client.terminate();
+              console.log(connection.userId, ' killed');
+            }
+          });
+          console.log('connection killed: ', connection.username);
           sendOnlinePeople();
         }, 1000);
       }, 5000);
@@ -46,23 +51,19 @@ const handleWebSocketConnection = (server) => {
       });
 
       connection.on('close', () => {
-        clearInterval(connection.timer);
         clearTimeout(connection.deathTimer);
-        connection.isAlive = false;
-        connection.terminate();
+        clearInterval(connection.timer);
+        [...wss.clients].forEach((client) => {
+          if (client.userId === connection.userId) {
+            client.isAlive = false;
+            client.terminate();
+            console.log(connection.userId, ' killed');
+          }
+        });
         sendOnlinePeople();
         console.log('connection closed at: ', new Date());
       });
 
-      // read username and id from the cookie
-      // const { cookie } = req.headers;
-      // console.log('req url: ', req.url);
-      // if (cookie) {
-      //   const tokenCookieString = cookie
-      //     .split(';')
-      //     .find((str) => str.startsWith('token='));
-      //   const token = tokenCookieString.split('=')[1];
-      //   console.log('COOKIE: ', token);
       const token = req.url.split('?token=')[1];
       if (token) {
         try {
