@@ -27,7 +27,7 @@ function App() {
           {/* Public routes: */}
           <Route element={<PublicLayout />}>
             <Route
-              path='/'
+              path='/register'
               element={
                 <Register
                   toggleDarkMode={toggleDarkMode}
@@ -37,7 +37,7 @@ function App() {
               }
             />
             <Route
-              path='/login'
+              path='/'
               element={
                 <Login
                   toggleDarkMode={toggleDarkMode}
