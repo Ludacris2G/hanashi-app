@@ -340,10 +340,10 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               type='text'
-              className='bg-primary-100 border p-2 w-full flex-grow rounded-full'
+              className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
               placeholder='Type here broseph'
             />
-            <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer w-max'>
+            <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
               <input type='file' className='hidden' onChange={sendFile} />
               <svg
                 xmlns='http://www.w3.org/2000/svg'
