@@ -80,7 +80,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
           <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
             Already have an account?
             <br />
-            <Link to='login' className='text-primary-500 font-normal'>
+            <Link to='/' className='text-primary-500 font-normal'>
               Log in here!
             </Link>
           </p>
