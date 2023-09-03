@@ -86,7 +86,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
           <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
             Don't have an account?
             <br />
-            <Link to='/' className='text-primary-500 font-normal'>
+            <Link to='register' className='text-primary-500 font-normal'>
               Register here!
             </Link>
           </p>
