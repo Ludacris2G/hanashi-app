@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import axios from 'axios';
-import nightwind from 'nightwind/helper';
 import LoginThemeButton from './components/LoginThemeButton';
 
 function Login({ setUser, isDarkMode, toggleDarkMode }) {
@@ -42,10 +41,6 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
       navigate('/chats');
     }
   }, [mainUsername]);
-  // const toggleDarkMode = () => {
-  //   setIsDarkMode(!isDarkMode);
-  //   nightwind.toggle();
-  // };
 
   return (
     <>
