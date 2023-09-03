@@ -343,7 +343,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
               placeholder='Type here broseph'
             />
-            <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
+            <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer w-min'>
               <input type='file' className='hidden' onChange={sendFile} />
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -351,7 +351,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='h-4 w-full'
+                className='h-4 w-min'
               >
                 <path
                   strokeLinecap='round'
