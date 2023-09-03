@@ -340,7 +340,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               type='text'
-              className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
+              className='bg-primary-100 border p-2 w-full rounded-full'
               placeholder='Type here broseph'
             />
             <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
