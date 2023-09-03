@@ -138,7 +138,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       axios.post('/api/v1/logout');
       setUsername(null);
       setId(null);
-      navigate('/login');
+      navigate('/');
     }
   }
 
@@ -177,7 +177,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       localStorage.removeItem('token');
       setUsername(null);
       setId(null);
-      navigate('/login');
+      navigate('/');
       setWs(null);
     }
   }
