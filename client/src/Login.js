@@ -13,7 +13,19 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   const { setUsername: setLoggedInUsername, username: mainUsername } =
     useContext(UserContext);
 
+  function showAlert() {
+    alert(
+      'Loading times may be inpacted by hosting provider. You may press Log In/Register again if nothing happens at first.'
+    );
+
+    localStorage.setItem('alertShown', 'true');
+  }
+
   async function logIn(e) {
+    const alertShown = localStorage.getItem('alertShown');
+    if (!alertShown) {
+      showAlert();
+    }
     e.preventDefault();
     try {
       const response = await axios.post(`/api/v1/auth/login`, {
