@@ -80,6 +80,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   function handleMessage(e) {
     const messageData = JSON.parse(e.data);
     if (messageData.logout) {
+      console.log('logged out 2');
       localStorage.removeItem('token');
       checkToken();
     }
@@ -97,7 +98,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
 
   function showOnlinePeople(peopleArr) {
     const people = {};
-    console.log(peopleArr);
     peopleArr.forEach(({ userId, username }) => {
       if (userId !== id && id && userId) people[userId] = username;
     });
@@ -111,6 +111,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
 
   function sendMessage(e, file = null) {
     if (e) e.preventDefault();
+    checkToken();
 
     if (file) {
       setUploadedFile(file);
@@ -168,9 +169,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       }, 1000);
     });
 
-    const intervalId = setInterval(checkToken, 60000);
-
-    return () => clearInterval(intervalId);
+    checkToken();
   }
 
   async function logout() {
@@ -181,7 +180,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         ws.close();
         ws.removeEventListener('message', handleMessage);
       }
-      console.log(ws);
       localStorage.removeItem('token');
       setUsername(null);
       setId(null);
@@ -208,7 +206,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       });
     };
   }
-  console.log(isUploadingFile, uploadedFile);
+
   return (
     <div className='flex h-screen w-screen'>
       <button
