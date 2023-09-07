@@ -5,6 +5,12 @@ import { uniqBy } from 'lodash';
 import axios from 'axios';
 import People from './components/People';
 import ThemeButton from './components/ThemeButton';
+import Spinner from './components/Spinner';
+import Clip from './components/Clip';
+import CheckMark from './components/CheckMark';
+import Plane from './components/Plane';
+import Logout from './components/Logout';
+import ChatsMenu from './components/ChatsMenu';
 
 function Chats({ toggleDarkMode, isDarkMode }) {
   const [ws, setWs] = useState(null);
@@ -20,23 +26,24 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   const navigate = useNavigate();
   const scrollReferenceDiv = useRef();
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
+  const [isConversationLoading, setIsConversationLoading] = useState(false);
 
   useEffect(() => {
     connectToWs();
   }, [id]);
 
   useEffect(() => {
-    const div = scrollReferenceDiv.current;
-    if (div) {
-      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (!isConversationLoading && messages) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 10);
     }
-  }, [messages]);
+  }, [messages, isConversationLoading]);
 
   useEffect(() => {
-    if (selectedUserId) fetchMessages();
-    const div = scrollReferenceDiv.current;
-    if (div) {
-      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (selectedUserId) {
+      setIsConversationLoading(true);
+      fetchMessages();
     }
   }, [selectedUserId]);
 
@@ -75,6 +82,8 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       }
     });
     setMessages(mappedMessages);
+    setIsConversationLoading(false);
+    scrollToBottom();
   }
 
   function handleMessage(e) {
@@ -91,6 +100,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         if (messageData.sender === prevSelectedUserId) {
           setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
         }
+        scrollToBottom();
         return prevSelectedUserId;
       });
     }
@@ -207,26 +217,20 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     };
   }
 
+  function scrollToBottom() {
+    const div = scrollReferenceDiv.current;
+    if (div) {
+      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }
+
   return (
     <div className='flex h-screen w-screen'>
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         className={`bg-primary-950 dark:bg-primary-900 ml-auto p-2 w-10 ${'block sm:hidden'}`}
       >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='w-6 h-6'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z'
-          />
-        </svg>
+        <ChatsMenu />
       </button>
       <div
         className={`bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900 flex flex-col ${`${
@@ -275,20 +279,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
             className='flex p-3 bg-primary-500 w-full  rounded-xs justify-center'
           >
             {' '}
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='w-6 h-6'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75'
-              />
-            </svg>
+            <Logout />
             <p className='items'>log out</p>
           </button>
         </div>
@@ -300,7 +291,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               &larr; please select a person
             </div>
           )}
-          {selectedUserId && (
+          {selectedUserId && !isConversationLoading ? (
             <div className='relative h-full'>
               <div className='overflow-y-scroll absolute inset-0 py-1'>
                 {messagesWithoutDuplicates.map((message) => (
@@ -344,6 +335,8 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                 ></div>
               </div>
             </div>
+          ) : (
+            'loading'
           )}
         </div>
         {selectedUserId && (
@@ -359,56 +352,12 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               <input type='file' className='hidden' onChange={sendFile} />
               {!isUploadingFile ? (
                 !uploadedFile ? (
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-4 w-4'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13'
-                    />
-                  </svg>
+                  <Clip />
                 ) : (
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-4 w-4'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M4.5 12.75l6 6 9-13.5'
-                    />
-                  </svg>
+                  <CheckMark />
                 )
               ) : (
-                <div role='status'>
-                  <svg
-                    aria-hidden='true'
-                    class='w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600'
-                    viewBox='0 0 100 101'
-                    fill='none'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
-                      fill='currentColor'
-                    />
-                    <path
-                      d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
-                      fill='currentFill'
-                    />
-                  </svg>
-                  <span class='sr-only'>Loading...</span>
-                </div>
+                <Spinner />
               )}
             </label>
             <button
@@ -416,16 +365,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               type='submit'
               className='bg-primary-900 p-3 text-primary-100 rounded-full cursor-pointer'
             >
-              <svg
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                height='1em'
-                width='1em'
-                className='text-primary-50'
-              >
-                <path fill='none' d='M0 0h24v24H0z' />
-                <path d='M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z' />
-              </svg>
+              <Plane />
             </button>
           </form>
         )}
