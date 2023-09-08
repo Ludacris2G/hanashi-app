@@ -22,6 +22,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   }
 
   async function logIn(e) {
+    console.log('logging at', new Date());
     const alertShown = localStorage.getItem('alertShown');
     if (!alertShown) {
       showAlert();
@@ -34,12 +35,12 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
       });
 
       if (response.data) {
-        console.log('we got token');
         localStorage.setItem('token', response.data.token);
 
         setLoggedInUsername(username);
         setUser(username);
         navigate('/chats');
+        console.log('logged in at', new Date());
       }
     } catch (error) {
       setError(error.response.data.msg || 'An error occurred');
