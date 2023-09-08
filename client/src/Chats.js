@@ -186,7 +186,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     const response = await axios.post('/api/v1/logout');
     if (response) {
       if (ws) {
-        console.log('ws closed');
         ws.close();
         ws.removeEventListener('message', handleMessage);
       }
@@ -276,7 +275,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         <div className='text-center'>
           <button
             onClick={logout}
-            className='flex p-3 bg-primary-500 w-full  rounded-xs justify-center'
+            className='flex p-3 bg-primary-500 w-full  rounded-xs justify-center hover:bg-primary-400 transition duration-200'
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -382,7 +381,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                   <CheckMark />
                 )
               ) : (
-                <Spinner />
+                <Spinner w={4} h={4} />
               )}
             </label>
             <button
