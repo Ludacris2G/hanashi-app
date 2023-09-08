@@ -6,10 +6,8 @@ import axios from 'axios';
 import People from './components/People';
 import ThemeButton from './components/ThemeButton';
 import Spinner from './components/Spinner';
-import Clip from './components/Clip';
 import CheckMark from './components/CheckMark';
 import Plane from './components/Plane';
-import Logout from './components/Logout';
 import ChatsMenu from './components/ChatsMenu';
 
 function Chats({ toggleDarkMode, isDarkMode }) {
@@ -241,7 +239,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         style={{ maxWidth: '300px', minWidth: '200px' }}
       >
         <div className='flex-grow' onClick={(e) => removePeopleHighlight(e)}>
-          <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider'>
+          <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider select-none'>
             HanashiApp 話
           </div>
           <ThemeButton
@@ -249,7 +247,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
             isDarkMode={isDarkMode}
             className='mx-auto'
           />
-          <div className='text-center border m-1 rounded-full border-primary-900'>
+          <div className='text-center border m-1 rounded-full border-primary-900 select-none'>
             {user}
           </div>
           {Object.keys(onlinePeople).map((userId) => (
@@ -294,14 +292,14 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                 d='M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75'
               />
             </svg>
-            <p className='items'>log out</p>
+            <p className='items select-none'>log out</p>
           </button>
         </div>
       </div>
       <div className='flex flex-col bg-primary-800 w-full p-2 pt-0'>
         <div className='flex-grow text-primary-100'>
           {!selectedUserId && (
-            <div className='flex items-center justify-center h-full text-lg'>
+            <div className='flex items-center justify-center h-full text-lg select-none'>
               &larr; please select a person
             </div>
           )}
@@ -339,7 +337,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                   </div>
                 ))}
                 {messagesWithoutDuplicates.length === 0 && (
-                  <div className='flex items-center justify-center h-full text-lg'>
+                  <div className='flex items-center justify-center h-full text-lg select-none'>
                     start a conversation
                   </div>
                 )}
