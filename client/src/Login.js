@@ -15,7 +15,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
 
   function showAlert() {
     alert(
-      'Loading times may be inpacted by hosting provider. You may press Log In/Register again if nothing happens at first.'
+      'Loading times may be impacted by hosting provider. You may press Log In/Register again if nothing happens at first.'
     );
 
     localStorage.setItem('alertShown', 'true');
