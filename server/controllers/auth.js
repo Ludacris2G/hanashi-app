@@ -4,6 +4,12 @@ const jwt = require('jsonwebtoken');
 const { BadRequestError, UnauthenticatedError } = require('../errors');
 
 const register = async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    throw new BadRequestError('Please provide username and password.');
+  }
+
   const user = await User.create({ ...req.body });
   const token = user.createJWT();
   res
@@ -15,7 +21,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    throw new BadRequestError('Please provide email and password');
+    throw new BadRequestError('Please provide username and password');
   }
 
   const user = await User.findOne({ username }, '-passowrd');
