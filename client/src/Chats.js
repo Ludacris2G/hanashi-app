@@ -115,8 +115,10 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   }
 
   function removePeopleHighlight(e) {
-    if (e.currentTarget === e.target) setSelectedUserId(null);
-    setMessages([]);
+    if (e.currentTarget === e.target) {
+      setSelectedUserId(null);
+      setMessages([]);
+    }
   }
 
   function sendMessage(e, file = null) {
