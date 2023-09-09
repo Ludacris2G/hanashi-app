@@ -25,6 +25,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   const scrollReferenceDiv = useRef();
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
   const [isConversationLoading, setIsConversationLoading] = useState(false);
+  const [localFile, setLocalFile] = useState(null);
 
   useEffect(() => {
     connectToWs();
@@ -43,6 +44,8 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       setIsConversationLoading(true);
       fetchMessages();
     }
+    setLocalFile(null);
+    setUploadedFile(null);
   }, [selectedUserId]);
 
   useEffect(() => {
@@ -115,6 +118,8 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   function removePeopleHighlight(e) {
     if (e.currentTarget === e.target) {
       setSelectedUserId(null);
+      setUploadedFile(null);
+      setLocalFile(null);
       setMessages([]);
     }
   }
@@ -124,8 +129,13 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     checkToken();
 
     if (file) {
+      const fileData = {
+        data: file.data,
+        name: file.name,
+        mimeType: file.type,
+      };
       setUploadedFile(file);
-      console.log('file: ', file);
+      setLocalFile(fileData);
       return;
     }
 
@@ -139,15 +149,16 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       })
     );
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: newMessageText,
-        isOurs: true,
-        _id: new Date().toISOString(),
-        file,
-      },
-    ]);
+    const newMessage = {
+      text: newMessageText,
+      isOurs: true,
+      _id: new Date().toISOString(),
+      file: localFile,
+      uploadedLocally: true,
+    };
+    setLocalFile(null);
+
+    setMessages((prev) => [...prev, newMessage]);
     setNewMessageText('');
   }
 
@@ -200,6 +211,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   function sendFile(e) {
     if (e.target.files.length === 0) {
       setUploadedFile(null);
+      setLocalFile(null);
       return;
     }
     setIsUploadingFile(true);
@@ -214,6 +226,9 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         type: e.target.files[0].type,
       });
     };
+    setTimeout(() => {
+      e.target.value = '';
+    }, 100);
   }
 
   function scrollToBottom() {
@@ -222,6 +237,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       div.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
+  // console.log(messagesWithoutDuplicates);
 
   return (
     <div className='flex h-screen w-screen'>
@@ -319,14 +335,18 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                       {message.file &&
                         message.file?.mimeType?.startsWith('image/') && (
                           <img
-                            src={URL.createObjectURL(
-                              new Blob(
-                                [new Uint8Array(message.file.data.data)],
-                                {
-                                  type: message.file.mimeType,
-                                }
-                              )
-                            )}
+                            src={
+                              !message.uploadedLocally
+                                ? URL.createObjectURL(
+                                    new Blob(
+                                      [new Uint8Array(message.file.data.data)],
+                                      {
+                                        type: message.file.mimeType,
+                                      }
+                                    )
+                                  )
+                                : message.file.data
+                            }
                             alt={message.file.name}
                             className={`sm:max-w-xs max-h-xs rounded-md`}
                           />
@@ -362,7 +382,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
             <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
               <input type='file' className='hidden' onChange={sendFile} />
               {!isUploadingFile ? (
-                !uploadedFile ? (
+                !uploadedFile || !localFile ? (
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
