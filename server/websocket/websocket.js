@@ -145,6 +145,7 @@ const handleWebSocketConnection = (server) => {
                   _id: messageDoc._id,
                   timestamp: messageDoc.createdAt,
                   recipient,
+                  file: messageDocData.file,
                 })
               );
             });
