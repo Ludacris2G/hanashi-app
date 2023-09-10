@@ -54,7 +54,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
         setIsLoading(false);
       }
     } catch (error) {
-      setError(error.response?.data.msg || 'An error occurred');
+      setError(error.response?.data.msg || 'An error occurred. Please try again.');
       setTimeout(() => setError(null), 3000);
       clearInterval(loadingInterval);
       setIsLoading(false);
