@@ -55,9 +55,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
         setIsLoading(false);
       }
     } catch (error) {
-      // setError(error.response.data.msg);
-      // setTimeout(() => setError(null), 3000);
-      setErrorFunction(error.response.data.msg);
+      setErrorFunction(error.response?.data.msg || 'An error occured');
       setIsLoading(false);
     }
   }
