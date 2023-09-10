@@ -10,6 +10,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const navigate = useNavigate();
 
   const { setUsername: setLoggedInUsername, username: mainUsername } =
@@ -26,6 +27,13 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   async function logIn(e) {
     e.preventDefault();
     setIsLoading(true);
+
+    const loadingInterval = setInterval(() => {
+      setLoadingMessageIndex((prevIndex) => {
+        return (prevIndex + 1) % loadingMessages.length;
+      });
+    }, 5000);
+
     const alertShown = localStorage.getItem('alertShown');
     if (!alertShown) {
       showAlert();
@@ -42,12 +50,13 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
         setLoggedInUsername(username);
         setUser(username);
         navigate('/chats');
+        clearInterval(loadingInterval);
         setIsLoading(false);
       }
     } catch (error) {
-      setError(error.response.data.msg || 'An error occurred');
-      console.log(error);
+      setError(error.response?.data.msg || 'An error occurred');
       setTimeout(() => setError(null), 3000);
+      clearInterval(loadingInterval);
       setIsLoading(false);
     }
   }
@@ -57,6 +66,21 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
       navigate('/chats');
     }
   }, [mainUsername]);
+
+  const loadingMessages = [
+    'Logging you in...',
+    'Calculating the meaning of life...',
+    'Brewing coffee for the server...',
+    'Summoning unicorns...',
+    'Counting stars in the cloud...',
+    'Teaching squirrels to water ski...',
+    'Finding the last digit of pi...',
+    'Chasing our tails...',
+    'Asking the magic 8-ball for advice...',
+    'Finding the lost city of Atlantis...',
+    'Putting on a tinfoil hat...',
+    'Convincing the server to dance...',
+  ];
 
   return (
     <>
@@ -93,7 +117,9 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
           />
           <button
             disabled={isLoading}
-            className='bg-primary-200 text-primary-50  w-full rounded-sm p-2'
+            className={`bg-primary-200 text-primary-50  w-full rounded-sm p-2 ${
+              isLoading ? 'cursor-not-allowed' : ''
+            }`}
           >
             {isLoading ? (
               <div className='w-full flex justify-center'>
@@ -114,6 +140,14 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
           )}
           {error && (
             <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
+          )}
+          {isLoading && (
+            <p
+              style={{ color: 'white', textAlign: 'center' }}
+              className='mt-2 text-xs'
+            >
+              {loadingMessages[loadingMessageIndex]}
+            </p>
           )}
         </form>
       </div>
