@@ -29,10 +29,9 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
   async function register(e) {
     e.preventDefault();
 
-    if (username && password && password !== confirmPassword) {
+    if (username && password !== confirmPassword) {
       console.log('returned');
       setErrorFunction("Passwords don't match");
-      clearInterval(loadingInterval);
       return;
     }
 
@@ -65,7 +64,10 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
         setIsLoading(false);
       }
     } catch (error) {
-      setErrorFunction(error.response?.data.msg || 'An error occured');
+      console.log(error);
+      setErrorFunction(
+        error.response?.data.msg || 'An error occured. Please try again.'
+      );
       clearInterval(loadingInterval);
       setIsLoading(false);
     }
