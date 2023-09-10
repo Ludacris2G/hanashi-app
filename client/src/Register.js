@@ -10,9 +10,9 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordMatch, setPasswordMatch] = useState(true);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const { username: mainUsername } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -28,19 +28,28 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
 
   async function register(e) {
     e.preventDefault();
+
     if (username && password && password !== confirmPassword) {
       console.log('returned');
-      setPasswordMatch(false);
       setErrorFunction("Passwords don't match");
+      clearInterval(loadingInterval);
       return;
     }
-    console.log('not returned');
+
     setIsLoading(true);
+
+    const loadingInterval = setInterval(() => {
+      setLoadingMessageIndex((prevIndex) => {
+        return (prevIndex + 1) % loadingMessages.length;
+      });
+    }, 5000);
+
     const alertShown = localStorage.getItem('alertShown');
+
     if (!alertShown) {
       showAlert();
     }
-    e.preventDefault();
+
     try {
       const { data } = await axios.post('/api/v1/auth/register', {
         username,
@@ -52,10 +61,12 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
         setLoggedInUsername(username);
         setUser(username);
         navigate('/chats');
+        clearInterval(loadingInterval);
         setIsLoading(false);
       }
     } catch (error) {
       setErrorFunction(error.response?.data.msg || 'An error occured');
+      clearInterval(loadingInterval);
       setIsLoading(false);
     }
   }
@@ -70,6 +81,21 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
     setError(errorText);
     setTimeout(() => setError(null), 3000);
   }
+
+  const loadingMessages = [
+    'Creating your account...',
+    'Calculating the meaning of life...',
+    'Brewing coffee for the server...',
+    'Teaching penguins to fly...',
+    'Counting stars in the cloud...',
+    'Translating hieroglyphics...',
+    'Finding the last digit of pi...',
+    'Rebooting the Matrix...',
+    'Cracking the Da Vinky code...',
+    'Finding the lost city of Atlantis...',
+    'Putting on a tinfoil hat...',
+    'Convincing the server to dance...',
+  ];
 
   return (
     <>
@@ -114,7 +140,9 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
           />
           <button
             disabled={isLoading}
-            className='bg-primary-200 text-primary-50  w-full rounded-sm p-2'
+            className={`bg-primary-200 text-primary-50  w-full rounded-sm p-2 ${
+              isLoading ? 'cursor-not-allowed' : ''
+            }`}
           >
             {isLoading ? (
               <div className='w-full flex justify-center'>
@@ -135,6 +163,14 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
           )}
           {error && (
             <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
+          )}
+          {isLoading && (
+            <p
+              style={{ color: 'white', textAlign: 'center' }}
+              className='mt-2 text-xs'
+            >
+              {loadingMessages[loadingMessageIndex]}
+            </p>
           )}
         </form>
       </div>
