@@ -4,11 +4,13 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import LoginThemeButton from './components/LoginThemeButton';
+import Spinner from './components/Spinner';
 
 function Register({ setUser, toggleDarkMode, isDarkMode }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { username: mainUsername } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -23,6 +25,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
   }
 
   async function register(e) {
+    setIsLoading(true);
     const alertShown = localStorage.getItem('alertShown');
     if (!alertShown) {
       showAlert();
@@ -39,10 +42,12 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
         setLoggedInUsername(username);
         setUser(username);
         navigate('/chats');
+        setIsLoading(false);
       }
     } catch (error) {
       setError(error.response.data.msg);
       setTimeout(() => setError(null), 3000);
+      setIsLoading(false);
     }
   }
 
@@ -86,16 +91,27 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className='bg-primary-200 text-primary-900  w-full rounded-sm p-2'>
-            Register
+          <button
+            disabled={isLoading}
+            className='bg-primary-200 text-primary-50  w-full rounded-sm p-2'
+          >
+            {isLoading ? (
+              <div className='w-full flex justify-center'>
+                <Spinner w={6} h={6} />
+              </div>
+            ) : (
+              <p className='text-primary-900'>Register</p>
+            )}
           </button>
-          <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
-            Already have an account?
-            <br />
-            <Link to='/' className='text-primary-500 font-normal'>
-              Log in here!
-            </Link>
-          </p>
+          {!isLoading && (
+            <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
+              Already have an account?
+              <br />
+              <Link to='/' className='text-primary-500 font-normal'>
+                Log in here!
+              </Link>
+            </p>
+          )}
           {error && (
             <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
           )}
