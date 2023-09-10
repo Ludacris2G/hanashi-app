@@ -9,6 +9,8 @@ import Spinner from './components/Spinner';
 function Register({ setUser, toggleDarkMode, isDarkMode }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMatch, setPasswordMatch] = useState(true);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { username: mainUsername } = useContext(UserContext);
@@ -25,6 +27,14 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
   }
 
   async function register(e) {
+    e.preventDefault();
+    if (username && password && password !== confirmPassword) {
+      console.log('returned');
+      setPasswordMatch(false);
+      setErrorFunction("Passwords don't match");
+      return;
+    }
+    console.log('not returned');
     setIsLoading(true);
     const alertShown = localStorage.getItem('alertShown');
     if (!alertShown) {
@@ -45,8 +55,9 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
         setIsLoading(false);
       }
     } catch (error) {
-      setError(error.response.data.msg);
-      setTimeout(() => setError(null), 3000);
+      // setError(error.response.data.msg);
+      // setTimeout(() => setError(null), 3000);
+      setErrorFunction(error.response.data.msg);
       setIsLoading(false);
     }
   }
@@ -56,6 +67,11 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
       navigate('/chats');
     }
   }, [mainUsername]);
+
+  function setErrorFunction(errorText) {
+    setError(errorText);
+    setTimeout(() => setError(null), 3000);
+  }
 
   return (
     <>
@@ -90,6 +106,13 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
             placeholder='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            className='block w-full rounded-sm p-2 mb-2 border'
+            type='password'
+            placeholder='confirm password'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <button
             disabled={isLoading}
