@@ -24,12 +24,12 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   }
 
   async function logIn(e) {
+    e.preventDefault();
     setIsLoading(true);
     const alertShown = localStorage.getItem('alertShown');
     if (!alertShown) {
       showAlert();
     }
-    e.preventDefault();
     try {
       const response = await axios.post(`/api/v1/auth/login`, {
         username,
