@@ -26,6 +26,8 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   const messagesWithoutDuplicates = uniqBy(messages, '_id');
   const [isConversationLoading, setIsConversationLoading] = useState(false);
   const [localFile, setLocalFile] = useState(null);
+  const [cachedData, setCachedData] = useState({});
+  const cachedDataRef = useRef(cachedData);
 
   useEffect(() => {
     connectToWs();
@@ -52,6 +54,10 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     getOfflinePeople();
   }, [onlinePeople]);
 
+  useEffect(() => {
+    cachedDataRef.current = cachedData;
+  }, [cachedData]);
+
   async function getOfflinePeople() {
     const request = await axios.get('/api/v1/people');
     if (request) {
@@ -68,6 +74,14 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   }
 
   async function fetchMessages() {
+    // check if the data is already stored for the selected chat
+    if (cachedData[selectedUserId]) {
+      setMessages(cachedData[selectedUserId]);
+      setIsConversationLoading(false);
+      scrollToBottom();
+      return;
+    }
+
     const messages = await axios.get(`/api/v1/messages/${selectedUserId}`);
     const mappedMessages = messages.data.messages.map((message) => {
       if (message.sender === id) {
@@ -82,13 +96,23 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         };
       }
     });
+
+    setCachedData((previousData) => {
+      return {
+        ...previousData,
+        [selectedUserId]: mappedMessages,
+      };
+    });
+
     setMessages(mappedMessages);
     setIsConversationLoading(false);
     scrollToBottom();
   }
 
   function handleMessage(e) {
+    const currentCachedData = cachedDataRef.current;
     const messageData = JSON.parse(e.data);
+
     if (messageData.logout) {
       console.log('logged out 2');
       localStorage.removeItem('token');
@@ -101,6 +125,19 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         if (messageData.sender === prevSelectedUserId) {
           setMessages((prev) => [...prev, { ...messageData, isOurs: false }]);
         }
+
+        // update cached data only if conversation from sender was previously stored
+        if (currentCachedData[messageData.sender]) {
+          const currentConversation = currentCachedData[messageData.sender];
+          const newConversation = [...currentConversation, messageData];
+          setCachedData((previousData) => {
+            return {
+              ...previousData,
+              [messageData.sender]: newConversation,
+            };
+          });
+        }
+
         scrollToBottom();
         return prevSelectedUserId;
       });
@@ -156,8 +193,19 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       file: localFile,
       uploadedLocally: true,
     };
-    setLocalFile(null);
 
+    // cache sent messages
+    if (cachedData[selectedUserId]) {
+      const previousConversation = cachedData[selectedUserId];
+      setCachedData((previousData) => {
+        return {
+          ...previousData,
+          [selectedUserId]: [...previousConversation, newMessage],
+        };
+      });
+    }
+
+    setLocalFile(null);
     setMessages((prev) => [...prev, newMessage]);
     setNewMessageText('');
   }
