@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import nightwind from 'nightwind/helper';
 import axios from 'axios';
 import { UserContext } from './UserContext';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginThemeButton from './components/LoginThemeButton';
 import Spinner from './components/Spinner';
 
