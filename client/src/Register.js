@@ -125,6 +125,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
             placeholder='username'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isLoading}
           />
           <input
             className='block w-full rounded-sm p-2 mb-2 border'
@@ -132,6 +133,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
             placeholder='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
           <input
             className='block w-full rounded-sm p-2 mb-2 border'
@@ -139,6 +141,7 @@ function Register({ setUser, toggleDarkMode, isDarkMode }) {
             placeholder='confirm password'
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isLoading}
           />
           <button
             disabled={isLoading}
