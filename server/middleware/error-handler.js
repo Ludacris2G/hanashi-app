@@ -18,7 +18,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     err.errors?.password?.properties?.path === 'password' &&
     err.errors?.password?.properties?.minlength
   ) {
-    customError.msg = 'Your password should be at least 6 characters long.';
+    customError.msg = 'Password should be at least 6 characters long.';
     customError.statusCode = StatusCodes.BAD_REQUEST;
   }
 
@@ -27,8 +27,16 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     err.errors?.username?.properties?.path === 'username' &&
     err.errors?.username?.properties?.minlength
   ) {
-    customError.msg = 'Your username should be at least 3 characters long.';
+    customError.msg = 'Username should be at least 3 characters long.';
     customError.statusCode = StatusCodes.BAD_REQUEST;
+  }
+
+  // Check for exceeded length in username when registering
+  if (
+    err.errors?.username?.properties?.type === 'maxlength' &&
+    err.errors?.username?.properties?.path === 'username'
+  ) {
+    customError.msg = 'Username exceeds 12 characters.';
   }
 
   // Send the custom error response
