@@ -301,23 +301,27 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         <ChatsMenu />
       </button>
       <div
-        className={`bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900 flex flex-col ${`${
+        className={`bg-primary-950 w-1/3 text-primary-50 dark:text-primary-900 flex flex-col h-full ${`${
           isMenuOpen ? 'block' : 'hidden sm:flex'
         }`}`}
-        style={{ maxWidth: '300px', minWidth: '200px' }}
+        style={{
+          maxWidth: '300px',
+          minWidth: '200px',
+        }}
+        onClick={(e) => removePeopleHighlight(e)}
       >
-        <div className='flex-grow' onClick={(e) => removePeopleHighlight(e)}>
-          <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider select-none'>
-            HanashiApp 話
-          </div>
-          <ThemeButton
-            toggleDarkMode={toggleDarkMode}
-            isDarkMode={isDarkMode}
-            className='mx-auto'
-          />
-          <div className='text-center border m-1 rounded-full border-primary-900 select-none'>
-            {user}
-          </div>
+        <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider select-none'>
+          HanashiApp 話
+        </div>
+        <ThemeButton
+          toggleDarkMode={toggleDarkMode}
+          isDarkMode={isDarkMode}
+          className='mx-auto'
+        />
+        <div className='text-center border m-1 rounded-full border-primary-900 select-none'>
+          {user}
+        </div>
+        <div className='overflow-y-scroll'>
           {Object.keys(onlinePeople).map((userId) => (
             <div key={userId} onClick={() => setSelectedUserCheck(userId)}>
               <People
