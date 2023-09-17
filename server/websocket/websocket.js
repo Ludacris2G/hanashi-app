@@ -143,7 +143,7 @@ const handleWebSocketConnection = (server) => {
                   text,
                   sender: connection.userId,
                   _id: messageDoc._id,
-                  timestamp: messageDoc.createdAt,
+                  createdAt: messageDoc.createdAt,
                   recipient,
                   file: messageDocData.file,
                 })
