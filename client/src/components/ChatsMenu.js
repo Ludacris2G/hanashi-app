@@ -8,7 +8,7 @@ function ChatsMenu() {
       viewBox='0 0 24 24'
       strokeWidth={1.5}
       stroke='currentColor'
-      className='w-6 h-6'
+      className='w-6 h-6 text-primary-100 dark:text-primary-900'
     >
       <path
         strokeLinecap='round'
