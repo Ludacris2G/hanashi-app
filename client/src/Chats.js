@@ -9,6 +9,7 @@ import Spinner from './components/Spinner';
 import CheckMark from './components/CheckMark';
 import Plane from './components/Plane';
 import ChatsMenu from './components/ChatsMenu';
+import { format } from 'date-fns';
 
 function Chats({ toggleDarkMode, isDarkMode }) {
   const [ws, setWs] = useState(null);
@@ -114,7 +115,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     const messageData = JSON.parse(e.data);
 
     if (messageData.logout) {
-      console.log('logged out 2');
       localStorage.removeItem('token');
       checkToken();
     }
@@ -192,6 +192,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       _id: new Date().toISOString(),
       file: localFile,
       uploadedLocally: true,
+      createdAt: new Date(),
     };
 
     // cache sent messages
@@ -285,7 +286,6 @@ function Chats({ toggleDarkMode, isDarkMode }) {
       div.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
-  // console.log(messagesWithoutDuplicates);
 
   return (
     <div className='flex h-screen w-screen'>
@@ -372,7 +372,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                 {messagesWithoutDuplicates.map((message) => (
                   <div
                     className={
-                      '' +
+                      'min-w-[4rem] ' +
                       (message.isOurs
                         ? 'bg-blue-900 text-white p-2 rounded-xl m-1 w-fit ml-auto'
                         : 'bg-white text-gray-800 rounded-xl m-1 p-2 w-fit')
@@ -400,7 +400,19 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                           />
                         )}
                     </div>
-                    {message.text}
+                    <div className='w-full flex'>
+                      <p className='text-md mr-1'>{message.text}</p>
+                      {message.createdAt && (
+                        <div className='ml-auto flex items-end'>
+                          <div className='text-[9px]'>
+                            {format(new Date(message.createdAt), 'h:mm')}
+                          </div>
+                          <div className='text-[9px] ml-1'>
+                            {format(new Date(message.createdAt), 'a')}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {messagesWithoutDuplicates.length === 0 && (
