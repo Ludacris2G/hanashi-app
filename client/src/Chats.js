@@ -153,7 +153,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
   }
 
   function removePeopleHighlight(e) {
-    if (e.currentTarget === e.target) {
+    if (e.currentTarget === e.target && !isConversationLoading) {
       setSelectedUserId(null);
       setUploadedFile(null);
       setLocalFile(null);
@@ -287,6 +287,11 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     }
   }
 
+  function setSelectedUserCheck(userId) {
+    if (isConversationLoading) return;
+    setSelectedUserId(userId);
+  }
+
   return (
     <div className='flex h-screen w-screen'>
       <button
@@ -314,24 +319,26 @@ function Chats({ toggleDarkMode, isDarkMode }) {
             {user}
           </div>
           {Object.keys(onlinePeople).map((userId) => (
-            <div key={userId} onClick={() => setSelectedUserId(userId)}>
+            <div key={userId} onClick={() => setSelectedUserCheck(userId)}>
               <People
                 key={userId}
                 selectedUserId={selectedUserId}
                 onlinePeople={onlinePeople}
                 userId={userId}
                 online={true}
+                isConversationLoading={isConversationLoading}
               />
             </div>
           ))}
           {Object.keys(offlinePeople).map((userId) => (
-            <div key={userId} onClick={() => setSelectedUserId(userId)}>
+            <div key={userId} onClick={() => setSelectedUserCheck(userId)}>
               <People
                 key={userId}
                 selectedUserId={selectedUserId}
                 onlinePeople={offlinePeople}
                 userId={userId}
                 online={false}
+                isConversationLoading={isConversationLoading}
               />
             </div>
           ))}
