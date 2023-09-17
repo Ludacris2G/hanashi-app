@@ -54,7 +54,9 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
         setIsLoading(false);
       }
     } catch (error) {
-      setError(error.response?.data.msg || 'An error occurred. Please try again.');
+      setError(
+        error.response?.data.msg || 'An error occurred. Please try again.'
+      );
       setTimeout(() => setError(null), 3000);
       clearInterval(loadingInterval);
       setIsLoading(false);
@@ -107,6 +109,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
             placeholder='username'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isLoading}
           />
           <input
             className='block w-full rounded-sm p-2 mb-2 border'
@@ -114,6 +117,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
             placeholder='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
           <button
             disabled={isLoading}
