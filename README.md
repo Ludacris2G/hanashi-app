@@ -17,14 +17,17 @@ HanashiApp is a chat application built using the MERN stack. It enables users to
 - Message Storage: Messages are stored in a MongoDB database for later retrieval.
 - Online Status: Users' online status is tracked, and online contacts are displayed.
 - User Interface: The app offers a user-friendly interface with a clean and responsive design.
+- Conversation History: Previously opened conversations are cached for faster loading when revisiting.
 
 ## How to Use
+
 1. Installation: Clone the repository and run npm install to install the required dependencies.
 2. Configuration: Set up environment variables by creating a .env file based on the provided .env.example.
 3. Backend: Start the backend server using npm start or node index.js.
 4. Frontend: Navigate to the client directory and start the React app using npm start.
 
 ## Contributing
+
 Contributions are welcome! If you encounter any issues or have ideas for improvements, feel free to open an issue or submit a pull request.
 
 <br>
