@@ -296,7 +296,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     <div className='flex h-screen w-screen'>
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className={`bg-primary-950 dark:bg-primary-900 ml-auto p-2 w-10 ${'block sm:hidden'}`}
+        className={`bg-primary-950 dark:bg-primary-950 ml-auto p-2 w-10 ${'block sm:hidden'}`}
       >
         <ChatsMenu />
       </button>
@@ -366,7 +366,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
           </button>
         </div>
       </div>
-      <div className='flex flex-col bg-primary-800 w-full p-2 pt-0'>
+      <div className='flex flex-col bg-primary-800 w-full p-2 pt-0 dark:bg-primary-700'>
         <div className='flex-grow text-primary-100'>
           {!selectedUserId && (
             <div className='flex items-center justify-center h-full text-lg select-none'>
@@ -382,7 +382,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
                       'min-w-[4rem] ' +
                       (message.isOurs
                         ? 'bg-blue-900 text-white p-2 rounded-xl m-1 w-fit ml-auto'
-                        : 'bg-white text-gray-800 rounded-xl m-1 p-2 w-fit')
+                        : 'bg-white text-gray-800 rounded-xl m-1 p-2 w-fit dark:bg-primary-200')
                     }
                     key={message._id}
                   >
@@ -462,7 +462,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               type='text'
-              className='bg-primary-100 border p-2 flex-grow rounded-full w-0'
+              className='bg-primary-100 border p-2 flex-grow rounded-full w-0 dark:bg-primary-900'
               placeholder='Type here broseph'
             />
             <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
