@@ -310,7 +310,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         }}
         onClick={(e) => removePeopleHighlight(e)}
       >
-        <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider select-none'>
+        <div className='text-center py-2 bg-primary-900 dark:bg-primary-50 border-b border-primary-900 font-bold tracking-wider select-none mb-1'>
           HanashiApp 話
         </div>
         <ThemeButton
