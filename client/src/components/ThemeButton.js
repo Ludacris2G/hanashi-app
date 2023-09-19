@@ -11,7 +11,7 @@ function ThemeButton({ toggleDarkMode, isDarkMode }) {
       style={{
         backgroundColor: 'gray',
         width: '50px',
-        height: '30px',
+        minHeight: '30px',
         zIndex: '10',
         margin: 'auto',
       }}
