@@ -321,7 +321,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
         <div className='text-center border m-1 rounded-full border-primary-900 select-none'>
           {user}
         </div>
-        <div className='overflow-y-scroll'>
+        <div className='overflow-y-scroll flex-grow'>
           {Object.keys(onlinePeople).map((userId) => (
             <div key={userId} onClick={() => setSelectedUserCheck(userId)}>
               <People
