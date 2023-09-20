@@ -470,7 +470,12 @@ function Chats({ toggleDarkMode, isDarkMode }) {
               placeholder='Type here broseph'
             />
             <label className='bg-gray-700 p-3 text-primary-100 rounded-full cursor-pointer'>
-              <input type='file' className='hidden' onChange={sendFile} />
+              <input
+                type='file'
+                accept='image/*'
+                className='hidden'
+                onChange={sendFile}
+              />
               {!isUploadingFile ? (
                 !uploadedFile || !localFile ? (
                   <svg
