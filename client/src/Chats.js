@@ -296,7 +296,7 @@ function Chats({ toggleDarkMode, isDarkMode }) {
     <div className='flex h-screen w-screen'>
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className={`bg-primary-950 dark:bg-primary-950 ml-auto p-2 w-10 ${'block sm:hidden'}`}
+        className={`bg-primary-950 dark:bg-primary-950 ml-auto p-2 w-10 z-10 ${'block sm:hidden'}`}
       >
         <ChatsMenu />
       </button>
