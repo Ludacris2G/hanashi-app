@@ -12,6 +12,7 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
   const [error, setError] = useState(null);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   const { setUsername: setLoggedInUsername, username: mainUsername } =
     useContext(UserContext);
@@ -90,71 +91,74 @@ function Login({ setUser, isDarkMode, toggleDarkMode }) {
         toggleDarkMode={toggleDarkMode}
         isDarkMode={isDarkMode}
       />
-      <div className='w-50 mx-auto mb-12'>
-        {/* LOGO */}
-        <p
-          className='text-center mb-1 text-primary-100 font-semibold select-none'
-          style={{ fontSize: '90px' }}
-        >
-          話
-        </p>
-        <p className='text-center text-xl mb-5 text-primary-100 font-semibold select-none'>
-          HanashiApp
-        </p>
-        {/* REGISTER FORM */}
-        <form style={{ width: '200px' }} onSubmit={logIn}>
-          <input
-            className='block w-full rounded-sm p-2 mb-2 border'
-            type='text'
-            placeholder='username'
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={isLoading}
-          />
-          <input
-            className='block w-full rounded-sm p-2 mb-2 border'
-            type='password'
-            placeholder='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-          />
-          <button
-            disabled={isLoading}
-            className={`bg-primary-200 text-primary-50  w-full rounded-sm p-2 ${
-              isLoading ? 'cursor-not-allowed' : ''
-            }`}
-          >
-            {isLoading ? (
-              <div className='w-full flex justify-center'>
-                <Spinner w={6} h={6} />
-              </div>
-            ) : (
-              <p className='text-primary-900'>Log In</p>
-            )}
-          </button>
-          {!isLoading && (
-            <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
-              Don't have an account?
-              <br />
-              <Link to='register' className='text-primary-500 font-normal'>
-                Register here!
-              </Link>
-            </p>
-          )}
-          {error && (
-            <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
-          )}
-          {isLoading && (
-            <p
-              style={{ color: 'white', textAlign: 'center' }}
-              className='mt-2 text-xs'
+      {token ? (
+        <div className='w-full flex justify-center'>
+          <Spinner w={20} h={20} />
+        </div>
+      ) : (
+        <div className='w-50 mx-auto mb-12'>
+          {/* LOGO */}
+          <p className='text-center mb-1 text-primary-100 font-semibold select-none text-[90px] bg-purpl'>
+            話
+          </p>
+          <p className='text-center text-xl mb-5 text-primary-100 font-semibold select-none'>
+            HanashiApp
+          </p>
+          {/* REGISTER FORM */}
+          <form style={{ width: '200px' }} onSubmit={logIn}>
+            <input
+              className='block w-full rounded-sm p-2 mb-2 border'
+              type='text'
+              placeholder='username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
+            />
+            <input
+              className='block w-full rounded-sm p-2 mb-2 border'
+              type='password'
+              placeholder='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+            />
+            <button
+              disabled={isLoading}
+              className={`bg-primary-200 text-primary-50  w-full rounded-sm p-2 ${
+                isLoading ? 'cursor-not-allowed' : ''
+              }`}
             >
-              {loadingMessages[loadingMessageIndex]}
-            </p>
-          )}
-        </form>
-      </div>
+              {isLoading ? (
+                <div className='w-full flex justify-center'>
+                  <Spinner w={6} h={6} />
+                </div>
+              ) : (
+                <p className='text-primary-900'>Log In</p>
+              )}
+            </button>
+            {!isLoading && (
+              <p className='mt-1 text-center text-xs text-primary-100 font-thin'>
+                Don't have an account?
+                <br />
+                <Link to='register' className='text-primary-500 font-normal'>
+                  Register here!
+                </Link>
+              </p>
+            )}
+            {error && (
+              <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>
+            )}
+            {isLoading && (
+              <p
+                style={{ color: 'white', textAlign: 'center' }}
+                className='mt-2 text-xs'
+              >
+                {loadingMessages[loadingMessageIndex]}
+              </p>
+            )}
+          </form>
+        </div>
+      )}
     </>
   );
 }
